@@ -8,8 +8,8 @@ Redefine Word Quality Estimation
 Download zip and uncompress it into the `corpus_generation/external_tools/`
 folder. In unix systems this can be done with
 
-    mkdir corpus_generation/external_tools/
-    cd corpus_generation/external_tools/
+    mkdir ./external_tools/
+    cd ./external_tools/
     wget https://github.com/clab/fast_align/archive/master.zip
     unzip master.zip
     
@@ -29,5 +29,6 @@ get it and store it inside `DATA/`, it should look like
 
 ## Train fast_align models
 
-    cd corpus_generation/
-    bash train.sh ../DATA/task2_en-de_training/train.src ../DATA/task2_en-de_training/train.pe ../DATA/tmp/
+    bash  corpus_generation/train_fast_align.sh DATA/task2_en-de_training/train.src DATA/task2_en-de_training/train.pe DATA/fast_align_models/en_de/
+
+## Generate Tags from Tercom

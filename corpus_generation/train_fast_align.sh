@@ -8,7 +8,14 @@ SCRIPT_FOLDER="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
 ROOT_FOLDER=$(realpath "$SCRIPT_FOLDER/../")
 
 # See the README for instructions on how to install this
-path_fast_align="${ROOT_FOLDER}/corpus_generation/external_tools/fast_align-master/build/"
+path_fast_align="${ROOT_FOLDER}/external_tools/fast_align-master/build"
+
+# Check if fast_align is available
+if [ ! -f "${path_fast_align}/fast_align" ];then
+        printf "\nMissing ${path_fast_align}/fast_align\n"
+        printf "Did you install fast align ? See README.md\n\n"
+        exit 1
+fi
 
 # ARGUMENT HANDLING
 source_sentences=$1
