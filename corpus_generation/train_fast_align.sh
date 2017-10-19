@@ -1,9 +1,9 @@
 #!/bin/bash
+# Flags
 set -o errexit
 set -o nounset
 set -o pipefail
-
-# Get root of the tools
+# Root of the tools
 SCRIPT_FOLDER="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
 ROOT_FOLDER=$(realpath "$SCRIPT_FOLDER/../")
 
@@ -18,39 +18,43 @@ if [ ! -f "${path_fast_align}/fast_align" ];then
 fi
 
 # ARGUMENT HANDLING
-source_sentences=$1
-target_sentences=$2
-work_folder=$3
-
-# Determine dataset from basename
-dataset=$(basename $target_sentences)
+in_source_sentences=$1
+in_target_sentences=$2
+in_work_folder=$3
+out_fast_align_folder=$4
 
 # Create work folder
-if [ ! -d "${work_folder}" ];then
-    echo "mkdir -p ${work_folder}"
-    mkdir -p ${work_folder}
+if [ ! -d "${in_work_folder}" ];then
+    echo "mkdir -p ${in_work_folder}"
+    mkdir -p ${in_work_folder}
 fi
 
-# PRE-PROCESS 
-
-# Generate source ||| target pairs
-paste -d '\t' $source_sentences $target_sentences > ${work_folder}/${dataset}.src-pe
-sed -i 's/\t/ ||| /g' ${work_folder}/${dataset}.src-pe
+# Concatenate data into one single file and shuffle it
+paste -d '\t' \
+    $in_source_sentences \
+    $in_target_sentences \
+    | sed 's/\t/ ||| /g' \
+    | shuf \
+    > $in_work_folder/$(basename in_target_sentences).pairs
 
 # TRAIN FAST ALIGN
 
-# Source to Target 
+echo "Training Source to Target model"
+
 ${path_fast_align}/fast_align \
-	-i ${work_folder}/${dataset}.src-pe \
+	-i $in_work_folder/$(basename in_target_sentences).pairs \
 	-d -o -v \
-    -p ${work_folder}/a.s2t.params \
-    > ${work_folder}/${dataset}.s2t.src-pe.align
+    -p ${out_fast_align_folder}/a.s2t.params \
+    > ${out_fast_align_folder}/$(basename in_target_sentences).align \
+    2> ${out_fast_align_folder}/a.s2t.err
 
-# Target to Source 
+echo "Training Target to Source model"
+
 ${path_fast_align}/fast_align \
-	-i ${work_folder}/${dataset}.src-pe \
+	-i $in_work_folder/$(basename in_target_sentences).pairs \
 	-d -o -v -r \
-    -p ${work_folder}/a.t2s.params \
-    > ${work_folder}/${dataset}.t2s.src-pe.align
+    -p ${out_fast_align_folder}/a.t2s.params \
+    > ${out_fast_align_folder}/$(basename in_target_sentences).align \
+    2> ${out_fast_align_folder}/a.t2s.err
 
-echo "Trained model stored under ${work_folder}/"
+echo "Trained model stored under ${out_fast_align_folder}"

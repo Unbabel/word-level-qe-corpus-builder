@@ -12,23 +12,40 @@ folder. In unix systems this can be done with
     cd ./external_tools/
     wget https://github.com/clab/fast_align/archive/master.zip
     unzip master.zip
+    rm master.zip
     
-Then follow `fast_align-master/README.md` to install. 
+Then follow 
+
+    fast_align-master/README.md 
+    
+to install. Note that you will need some extra utilities described there.
+Ubuntu friendly commands are given in the README.md. If you are sucesful the
+following binary should be available
+
+    ./external_tools/fast_align-master/build/fast_align  
 
 ## Install Tercom
 
-TODO
+Just dowload the tool and decompress it
 
-# Creating your own Corpus 
+    cd ./external_tools
+    wget http://www.cs.umd.edu/~snover/tercom/tercom-0.7.25.tgz
+    tar -xf tercom-0.7.25.tgz
 
-This is exemplified usingv the WMT2017 data-set. If you want to reproduce this 
-get it and store it inside `DATA/`, it should look like
+If you are sucesful the following file should be available
 
-	DATA/task2_en-de_training/
-	etc
+    ./external_tools/tercom-0.7.25/tercom.7.25.jar
 
-## Train fast_align models
+where `<version>` is the tercom version.
 
-    bash  corpus_generation/train_fast_align.sh DATA/task2_en-de_training/train.src DATA/task2_en-de_training/train.pe DATA/fast_align_models/en_de/
+## Generate alignments
 
 ## Generate Tags from Tercom
+
+
+
+## Training models for your own Corpus 
+
+See 
+
+    corpus_generation/README.md
