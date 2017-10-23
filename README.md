@@ -29,12 +29,12 @@ following binary should be available
 Just dowload the tool and decompress it
 
     cd ./external_tools
-    wget http://www.cs.umd.edu/~snover/tercom/tercom-0.7.25.tgz
-    tar -xf tercom-0.7.25.tgz
+    wget http://www.cs.umd.edu/~snover/tercom/tercom-<version>.tgz
+    tar -xf tercom-<version>.tgz
 
 If you are sucesful the following file should be available
 
-    ./external_tools/tercom-0.7.25/tercom.7.25.jar
+    ./external_tools/tercom-<version>/tercom.<version>.jar
 
 where `<version>` is the tercom version.
 

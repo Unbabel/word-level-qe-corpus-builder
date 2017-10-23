@@ -21,7 +21,8 @@ fi
 in_hypothesis_file=$1
 in_reference_file=$2
 in_work_folder=$3
-out_tercom_file=$4
+out_tercom_edits_file=$4
+out_tercom_alignments_file=$5
 
 # Get basenames
 reference_basename=$(basename in_reference_file)
@@ -31,16 +32,24 @@ if [ ! -d "$in_work_folder" ];then
     mkdir -p $in_work_folder
 fi
 # Format files in tercom format
+echo "Formating text"
 python format_tercom.py $in_reference_file > $in_work_folder/$reference_basename
 python format_tercom.py $in_hypothesis_file > $in_work_folder/$hypothesis_basename
 
 # Call tercom
+echo "Producing tercom XML"
 java \
     -jar $path_tercom \
     -r $in_work_folder/$reference_basename \
     -h $in_work_folder/$hypothesis_basename \
-    -n $out_tercom_file \
+    -n $in_work_folder/$(basename out_tercom_file) \
     -d 0 > $in_work_folder/tercom.log
 
 # Reformat
-python ./edit_alignments.py $out_tercom_file.xml  
+echo "Reading XML"
+python ./edit_alignments.py \
+    $in_work_folder/$(basename out_tercom_file).xml \
+    $in_hypothesis_file \
+    $in_reference_file  \
+    $out_tercom_edits_file \
+    $out_tercom_alignments_file
