@@ -5,8 +5,8 @@ Redefine Word Quality Estimation
 
 ## Install Fast Align
 
-Download zip and uncompress it into the `corpus_generation/external_tools/`
-folder. In unix systems this can be done with
+Download zip and uncompress it into the `./external_tools/` folder. In unix
+systems this can be done with
 
     mkdir ./external_tools/
     cd ./external_tools/
