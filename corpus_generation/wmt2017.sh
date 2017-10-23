@@ -8,8 +8,6 @@ set -o nounset
 set -o pipefail
 
 # For fast align models
-# For the extracted features
-#mkdir ../DATA/TMP/
 
 # Train forward and backward models for fast align
 echo "Training fast_align"
