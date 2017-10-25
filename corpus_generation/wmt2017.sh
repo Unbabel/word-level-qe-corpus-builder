@@ -36,3 +36,12 @@ bash ./tercom.sh \
     ../DATA/temporal_files/train.mt-pe.edits \
     ../DATA/temporal_files/train.mt-pe.edit_alignments
 echo "../DATA/temporal_files/train.mt-pe.edits"
+
+# Generate OK/BAD tags
+python ./generate_BAD_tags.py \
+    DATA/task2_en-de_training/train.src \
+    DATA/task2_en-de_training/train.mt \
+    DATA/task2_en-de_training/train.pe \
+    DATA/temporal_files/train.src-pe.alignments \
+    DATA/temporal_files/train.mt-pe.edit_alignments \
+    DATA/temporal_files/train.mt-pe.edits

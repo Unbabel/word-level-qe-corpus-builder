@@ -64,6 +64,24 @@ for src, mt, pe, src_pe, mt_pe, edits in zip(
 # Display in vertical
 for sentence in sentences:
     print("")
+
+    # Pad source and target
+    mt_indices, pe_indices = zip(*sentence['mt-pe_alignments'])
+
+    import ipdb;ipdb.set_trace(context=50)
+
+    # Find words deleted on mt
+    pe_indices = map(lambda x: x[1], sentence['mt-pe_alignments'])
+    missing_pe_indices = [
+        x for x in range(len(sentence['pe']))
+        if x not in pe_indices
+    ]
+
+    if missing_pe_indices:
+        import ipdb;ipdb.set_trace(context=50)
+        print("")
+
+
     for mt_index in range(len(sentence['mt'])):
 
         # Find aligned reference words
@@ -71,6 +89,9 @@ for sentence in sentences:
             x[0] for x in sentence['mt-pe_alignments'] if x[1] == mt_index
         ]
         pe_tokens = " ".join([sentence['pe'][i] for i in pe_index])
+
+
+        # PRINT MT PT AND SOURCE
 
         # Find source words aligned to reference
         if pe_index:
