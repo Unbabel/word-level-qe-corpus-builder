@@ -13,7 +13,7 @@ set -o pipefail
 echo "Training fast_align"
 bash ./train_fast_align.sh \
     ../DATA/task2_en-de_training/train.src \
-    ../DATA/task2_en-de_training/train.mt \
+    ../DATA/task2_en-de_training/train.pe \
     ../DATA/temporal_files/fast_align/ \
     ../DATA/fast_align_models/en_de/
 
@@ -21,11 +21,11 @@ bash ./train_fast_align.sh \
 echo "Generating alignments"
 bash ./align.sh \
     ../DATA/task2_en-de_training/train.src \
-    ../DATA/task2_en-de_training/train.mt \
+    ../DATA/task2_en-de_training/train.pe \
     ../DATA/fast_align_models/en_de/ \
     ../DATA/temporal_files/fast_align/ \
-    ../DATA/temporal_files/train.src-mt.alignments
-echo "../DATA/temporal_files/train.src-mt.alignments"
+    ../DATA/temporal_files/train.src-pe.alignments
+echo "../DATA/temporal_files/train.src-pe.alignments"
 
 # Generate tercom target-side alignments 
 echo "Generating Tercom alignments"
