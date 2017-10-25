@@ -36,7 +36,6 @@ paste -d '\t' \
     $in_source_sentences \
     $in_target_sentences \
     | sed 's/\t/ ||| /g' \
-    | shuf \
     > $in_work_folder/$(basename in_target_sentences).pairs
 
 # ALIGN
