@@ -21,8 +21,7 @@ fi
 in_hypothesis_file=$1
 in_reference_file=$2
 in_work_folder=$3
-out_tercom_edits_file=$4
-out_tercom_alignments_file=$5
+out_tercom_alignments_file=$4
 
 # Get basenames
 reference_basename=$(basename in_reference_file)
@@ -74,5 +73,4 @@ python ./edit_alignments.py \
     $in_work_folder/$(basename out_tercom_file).xml \
     $in_hypothesis_file \
     $in_reference_file  \
-    $out_tercom_edits_file \
     $out_tercom_alignments_file

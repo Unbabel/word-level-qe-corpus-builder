@@ -31,6 +31,12 @@ if [ ! -f "${in_fast_align_folder}/a.s2t.params" ];then
         exit 1
 fi
 
+# Create work folder
+if [ ! -d "${in_work_folder}" ];then
+    echo "mkdir -p ${in_work_folder}"
+    mkdir -p ${in_work_folder}
+fi
+
 # Concatenate data into one single file and shuffle it
 paste -d '\t' \
     $in_source_sentences \
