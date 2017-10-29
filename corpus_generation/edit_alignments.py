@@ -13,69 +13,80 @@ def read_file(file_path):
 
 
 assert len(sys.argv[:1]) == 1, "Expected one argument"
-in_tercom_xml, in_hypothesis, in_reference, out_edit, out_align = sys.argv[1:]
+in_tercom_xml, in_mt_original, in_pe_original, out_edit, out_align = sys.argv[1:]
 
 # Read original files
-hypothesis = read_file(in_hypothesis)
-reference = read_file(in_reference)
+mt_original = read_file(in_mt_original)
+pe_original = read_file(in_pe_original)
 
 # Parse tercom HTML
 mt_tokens, pe_tokens, edits, hters = parse_pra_xml.parse_file(in_tercom_xml)
 
-edit_actions = [[edit.o for edit in sent_edits] for sent_edits in edits]
+# Sanity check: Original and tercom files match in number of tokens
+# Note that we will not use the tokenized tercom outputs only the alignments
+nr_sentences = len(mt_tokens)
+for index in range(nr_sentences):
+    assert len(mt_original[index]) == len([x for x in mt_tokens[index] if x]), "Lengths do  not match"
+    assert len(pe_original[index]) == len([x for x in pe_tokens[index] if x]), "Lengths do  not match"
 
 edit_alignments = []
+edit_actions = []
 for sent_index, sent_edits in enumerate(edits):
 
-    reference_index = 0
-    hypothesis_index = 0
+    pe_original_index = 0
+    mt_original_index = 0
     edit_alignments_sent = []
+    sent_edit_actions = []
     for edit in sent_edits:
+
+        # Store edit action
+        sent_edit_actions.append(edit.o)
 
         if edit.o == 'C':
 
             # Sanity check
-            # NOTE: Tercom ignores case?
+            # NOTE: Tercom ignores unless -s is used
             if (
-                hypothesis[sent_index][hypothesis_index].lower() !=
-                reference[sent_index][reference_index].lower()
+                mt_original[sent_index][mt_original_index].lower() !=
+                pe_original[sent_index][pe_original_index].lower()
             ):
                 raise Exception("Reading Tercom xml failed")
 
             edit_alignments_sent.append("-".join([
-                str(reference_index),
-                str(hypothesis_index)
+                str(pe_original_index),
+                str(mt_original_index)
             ]))
 
-            reference_index += 1
-            hypothesis_index += 1
+            pe_original_index += 1
+            mt_original_index += 1
 
         elif edit.o == 'S':
 
             edit_alignments_sent.append("-".join([
-                str(reference_index),
-                str(hypothesis_index)
+                str(pe_original_index),
+                str(mt_original_index)
             ]))
 
-            reference_index += 1
-            hypothesis_index += 1
+            pe_original_index += 1
+            mt_original_index += 1
 
         elif edit.o == 'I':
-            reference_index += 1
+            pe_original_index += 1
 
         elif edit.o == 'D':
-            hypothesis_index += 1
+            mt_original_index += 1
 
         else:
             raise Exception("Uknown edit %s" % edit.o)
 
     edit_alignments.append(edit_alignments_sent)
+    edit_actions.append(sent_edit_actions)
 
 # Write files
-with open(out_edit, 'w') as fid:
+with codecs.open(out_edit, 'w', 'utf-8') as fid:
     for sent_edits in edit_actions:
         fid.write("%s\n" % (" ".join(sent_edits)))
 
-with open(out_align, 'w') as fid:
+with codecs.open(out_align, 'w', 'utf-8') as fid:
     for sent_edits in edit_alignments:
         fid.write("%s\n" % (" ".join(sent_edits)))

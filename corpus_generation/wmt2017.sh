@@ -8,6 +8,12 @@ set -o nounset
 set -o pipefail
 
 # For fast align models
+if [ -d ../DATA/temporal_files/ ];then
+    rm -R ../DATA/temporal_files/
+    mkdir ../DATA/temporal_files/    
+else
+    mkdir ../DATA/temporal_files/    
+fi
 
 # Train forward and backward models for fast align
 echo "Training fast_align"
