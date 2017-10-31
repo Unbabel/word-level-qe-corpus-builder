@@ -3,7 +3,7 @@ import argparse
 from collections import defaultdict
 import sys
 sys.path.append('..')
-from tools.io import read_file, purple
+from qe_tools.io import read_file, purple
 
 
 GAP_ERRORS = True
