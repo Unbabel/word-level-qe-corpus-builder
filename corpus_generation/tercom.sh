@@ -5,7 +5,7 @@ set -o nounset
 set -o pipefail
 # Root of the tools
 SCRIPT_FOLDER="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
-ROOT_FOLDER=$(realpath "$SCRIPT_FOLDER/../")
+ROOT_FOLDER="$SCRIPT_FOLDER/../"
 
 # See the README for instructions on how to install this
 path_tercom="${ROOT_FOLDER}/external_tools/tercom-0.7.25/tercom.7.25.jar"
