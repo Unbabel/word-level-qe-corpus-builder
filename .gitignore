@@ -1,3 +1,5 @@
 DATA/
-*.swp
+external_tools/
+*swp
 *.pyc
+venv/
