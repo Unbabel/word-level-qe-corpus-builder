@@ -19,8 +19,7 @@ Then follow
     fast_align-master/README.md 
     
 to install. Note that you will need some extra utilities described there.
-Ubuntu friendly commands are given in the README.md. If you are sucesful the
-following binary should be available
+Ubuntu friendly commands are given in the README.md. 
 
     ./external_tools/fast_align-master/build/fast_align  
 
@@ -38,14 +37,37 @@ If you are sucesful the following file should be available
 
 where `<version>` is the tercom version.
 
-## Generate alignments
+## Generating the first version of the tags 
 
-## Generate Tags from Tercom
+You will need to train fast align from a sufficienlty big corpus. Current
+example uses WMT2017 QE-task2 data which is unsufficient. Uncompress the
+WMT2017 data on a `DATA` folder. This should look like
 
+    DATA/task2_en-de_training
 
+Then train `fast_align` with
 
-## Training models for your own Corpus 
+    cd corpus_generation
+    bash wmt2017_train.sh
 
-See 
+Once fast align is trained, call the following to generate the tags
 
-    corpus_generation/README.md
+    bash wmt2017_tags.sh
+
+Tags are currently stored under
+
+    DATA/temporal_files/
+
+The target-side tags are duplicated (words + gaps)
+
+    DATA/temporal_files/target.tags
+
+The source side tags are simple
+
+    DATA/temporal_files/source.tags
+
+## Exploring the tags
+
+Use the notebook in `notebooks`
+
+    notebooks/Investigate-BAD-tag-approaches.ipynb
