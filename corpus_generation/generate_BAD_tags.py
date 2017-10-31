@@ -3,11 +3,12 @@ import argparse
 from collections import defaultdict
 import sys
 sys.path.append('..')
-from qe_tools.io import read_file, purple
+from qe_tools.io import read_file
 
 
 GAP_ERRORS = True
 SOURCE_ERRORS = True
+
 
 def check_out_of_bounds(tokens, alignments, source=True):
     """
@@ -178,6 +179,13 @@ def get_quality_tags(mt_tokens, pe_tokens, pe_mt_alignments, pe2source):
         # Insert deletion errors as gaps
         if GAP_ERRORS:
             word_and_gaps_tags = []
+
+            # Add starting OK/BAD
+            if -1 in sent_deletion_indices:
+                word_and_gaps_tags.append('BAD')
+            else:
+                word_and_gaps_tags.append('OK')
+
             for index, tag in enumerate(sent_tags):
                 if index in sent_deletion_indices:
                     word_and_gaps_tags.extend([tag, 'BAD'])
@@ -197,7 +205,7 @@ def get_quality_tags(mt_tokens, pe_tokens, pe_mt_alignments, pe2source):
 
     # Basic sanity checks
     assert all(
-        [len(aa)*2 == len(bb) for aa, bb in zip(mt_tokens, target_tags)]
+        [len(aa)*2 + 1 == len(bb) for aa, bb in zip(mt_tokens, target_tags)]
     ), "tag creation failed"
     assert all(
         [len(aa) == len(bb) for aa, bb in zip(source_tokens, source_tags)]
@@ -226,7 +234,6 @@ if __name__ == '__main__':
         pe2source,
         pe_mt_alignments
     ) = read_data(args)
-
 
     # GET TAGS FOR SOURCE AND TARGET
     source_tags, target_tags = get_quality_tags(
