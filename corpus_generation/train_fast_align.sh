@@ -29,6 +29,12 @@ if [ ! -d "${in_work_folder}" ];then
     mkdir -p ${in_work_folder}
 fi
 
+# Create work folder
+if [ ! -d "${out_fast_align_folder}" ];then
+    echo "mkdir -p ${out_fast_align_folder}"
+    mkdir -p ${out_fast_align_folder}
+fi
+
 # Concatenate data into one single file and shuffle it
 paste -d '\t' \
     $in_source_sentences \
