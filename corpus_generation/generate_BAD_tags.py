@@ -246,4 +246,6 @@ if __name__ == '__main__':
     # WRITE DATA
     if SOURCE_ERRORS:
         write_tags(args.out_source_tags, source_tags)
+        print("Wrote %s" % args.out_source_tags)
     write_tags(args.out_target_tags, target_tags)
+    print("Wrote %s" % args.out_target_tags)
