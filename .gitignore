@@ -1,4 +1,5 @@
 DATA/
+.ipynb_checkpoints/
 external_tools/
 *swp
 *.pyc
