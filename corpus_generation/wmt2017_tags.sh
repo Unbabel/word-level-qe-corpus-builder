@@ -44,9 +44,9 @@ bash ./tercom.sh \
 
 # Generate OK/BAD tags
 python ./generate_BAD_tags.py \
-    --in-source-segments $in_source_file \
-    --in-mt-segments $in_mt_file \
-    --in-pe-segments $in_pe_file \
+    --in-source-tokens $in_source_file \
+    --in-mt-tokens $in_mt_file \
+    --in-pe-tokens $in_pe_file \
     --in-source-pe-alignments $out_mt_alignments \
     --in-pe-mt-alignments $out_edit_alignments \
     --out-source-tags $out_source_tags \

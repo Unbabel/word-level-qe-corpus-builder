@@ -38,19 +38,19 @@ def parse_arguments(sys_argv):
     )
     # Arguments defining a time slice
     parser.add_argument(
-        '--in-source-segments',
+        '--in-source-tokens',
         help='One sentence per line',
         required=True,
         type=str
     )
     parser.add_argument(
-        '--in-mt-segments',
+        '--in-mt-tokens',
         help='One sentence per line',
         required=True,
         type=str
     )
     parser.add_argument(
-        '--in-pe-segments',
+        '--in-pe-tokens',
         help='One sentence per line',
         required=True,
         type=str
@@ -90,9 +90,9 @@ def parse_arguments(sys_argv):
 
 def read_data(args):
 
-    source_tokens = read_file(args.in_source_segments)
-    mt_tokens = read_file(args.in_mt_segments)
-    pe_tokens = read_file(args.in_pe_segments)
+    source_tokens = read_file(args.in_source_tokens)
+    mt_tokens = read_file(args.in_mt_tokens)
+    pe_tokens = read_file(args.in_pe_tokens)
     src_pe_alignments = read_file(args.in_source_pe_alignments, alignments=True)
     pe_mt_alignments = read_file(args.in_pe_mt_alignments, alignments=True)
 
