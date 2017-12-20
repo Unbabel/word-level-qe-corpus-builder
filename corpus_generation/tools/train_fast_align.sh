@@ -5,7 +5,7 @@ set -o nounset
 set -o pipefail
 # Root of the tools
 SCRIPT_FOLDER="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
-ROOT_FOLDER="$SCRIPT_FOLDER/../"
+ROOT_FOLDER="$SCRIPT_FOLDER/../../"
 
 # See the README for instructions on how to install this
 path_fast_align="${ROOT_FOLDER}/external_tools/fast_align-master/build"

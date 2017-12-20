@@ -200,6 +200,7 @@ def get_quality_tags(mt_tokens, pe_tokens, pe_mt_alignments, pe2source):
             else:
                 word_and_gaps_tags.append('OK')
 
+            # Add rest of OK/BADs
             for index, tag in enumerate(sent_tags):
                 if index in sent_deletion_indices:
                     word_and_gaps_tags.extend([tag, 'BAD'])

@@ -3,9 +3,9 @@
 set -o errexit
 set -o nounset
 set -o pipefail
-# Root of the tools
+# Root of the tools. If you change the script location, this wont work!
 SCRIPT_FOLDER="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
-ROOT_FOLDER="$SCRIPT_FOLDER/../"
+ROOT_FOLDER="$SCRIPT_FOLDER/../../"
 
 # See the README for instructions on how to install this
 path_fast_align="${ROOT_FOLDER}/external_tools/fast_align-master/build"
@@ -55,4 +55,4 @@ ${path_fast_align}/force_align.py \
     < $in_work_folder/$(basename in_target_sentences).pairs \
     > $out_alignments
 
-echo "Created $in_fast_align_folder/$(basename in_source_target_sentences).alignments"
+echo "Created $out_alignments"
