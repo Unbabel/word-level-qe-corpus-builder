@@ -43,28 +43,20 @@ You will need to train fast align from a sufficienlty big corpus. Current
 example uses WMT2017 QE-task2 data which is unsufficient. Uncompress the
 WMT2017 data on a `DATA` folder. This should look like
 
-    DATA/task2_en-de_training
+    DATA/task2_en-de_training/
 
 Then train `fast_align` with
 
-    cd corpus_generation
-    bash wmt2017_train.sh
+    cd corpus_generation/
+    bash train_fast_align_wmt2017.sh
 
 Once fast align is trained, call the following to generate the tags
 
-    bash wmt2017_tags.sh
+    bash get_tags_wmt2017.sh 
 
-Tags are currently stored under
+Tags are currently stored under e.g.
 
-    DATA/temporal_files/
-
-The target-side tags are duplicated (words + gaps)
-
-    DATA/temporal_files/target.tags
-
-The source side tags are simple
-
-    DATA/temporal_files/source.tags
+    DATA/temporal_files/task2_en-de_training/
 
 ## Exploring the tags
 

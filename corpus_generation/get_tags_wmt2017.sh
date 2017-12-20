@@ -1,15 +1,14 @@
 #!/bin/bash
 #
-# This generates the alignment data for WMT2017 as an example. It requires the tools to be installed (see README.md at the root of the repo) and fast_align models for each language pair to be trained (see train_fast_align_wmt2017.sh)
+# This generates the alignment data for WMT2017 as an example. It requires the
+# tools to be installed (see README.md at the root of the repo) and fast_align
+# models for each language pair to be trained (see train_fast_align_wmt2017.sh)
 #
-
 
 # Flags
 set -o errexit
 set -o nounset
 set -o pipefail
-
-# Language pair
 
 # Check it is run from the right folder
 if [ ! -d "tools/" ];then
@@ -17,12 +16,12 @@ if [ ! -d "tools/" ];then
     exit        
 fi
 
+# Loop over language pairs
 for language_pair in en-de de-en;do
+    # Loop over sets
     for dataset in train dev;do
 
-        echo "$language_pair $dataset"
-
-        # More uniformity in the names would be better
+        # More uniformity in the names would be desired
         if [ "$dataset" == "train" ];then
             folder=task2_${language_pair}_training
         else
@@ -31,6 +30,7 @@ for language_pair in en-de de-en;do
         out_temporal_folder=../DATA/temporal_files/$folder/
 
         # Get tags for this set
+        echo "Getting tasg for $language_pair: $dataset"
         bash tools/get_tags.sh \
             ../DATA/$folder/${dataset}.src \
             ../DATA/$folder/${dataset}.mt \

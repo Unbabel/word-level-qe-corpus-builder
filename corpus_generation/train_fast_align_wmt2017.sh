@@ -26,7 +26,7 @@ for language_pair in en-de de-en;do
    
     # For fast align models
     [ -d "$out_temporal_folder" ] && rm -R "$out_temporal_folder"
-    mkdir "$out_temporal_folder"    
+    mkdir -p "$out_temporal_folder"    
     
     # Train forward and backward models for fast align
     echo "Training fast_align"
