@@ -138,6 +138,8 @@ def get_quality_tags(mt_tokens, pe_tokens, pe_mt_alignments, pe2source):
         source_sentence_bad_indices = set()
         mt_position = 0
 
+        # Loop over alignments. This has the length of the edit-distance aligned
+        # sequences.
         for pe_idx, mt_idx in pe_mt_alignments[sentence_index]:
 
             if mt_idx is None:
@@ -147,8 +149,14 @@ def get_quality_tags(mt_tokens, pe_tokens, pe_mt_alignments, pe2source):
 
                 if SOURCE_ERRORS:
                     # Aligned words in the source are BAD
-                    source_sentence_bad_indices |= \
-                        set(pe2source[sentence_index][pe_idx])
+                    # RULE: If word exists elsewhere in the sentence do not
+                    # propagate error to the source.
+                    if (
+                        pe_tokens[sentence_index][pe_idx] not in
+                        mt_tokens[sentence_index]
+                    ):
+                        source_sentence_bad_indices |= \
+                            set(pe2source[sentence_index][pe_idx])
 
             elif pe_idx is None:
 
@@ -167,8 +175,14 @@ def get_quality_tags(mt_tokens, pe_tokens, pe_mt_alignments, pe2source):
 
                 if SOURCE_ERRORS:
                     # Aligned words in the source are BAD
-                    source_sentence_bad_indices |= \
-                        set(pe2source[sentence_index][pe_idx])
+                    # RULE: If word exists elsewhere in the sentence do not
+                    # propagate error to the source.
+                    if (
+                        pe_tokens[sentence_index][pe_idx] not in
+                        mt_tokens[sentence_index]
+                    ):
+                        source_sentence_bad_indices |= \
+                            set(pe2source[sentence_index][pe_idx])
 
             else:
 
