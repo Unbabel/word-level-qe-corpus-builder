@@ -1,7 +1,12 @@
-# TODO: Proper instaler for the tools
+import os
 import argparse
 from collections import defaultdict
+from itertools import chain
+from collections import Counter
+from operator import itemgetter
+import json
 import sys
+# TODO: Proper instaler for the tools
 sys.path.append('..')
 from qe_tools.io import read_file
 
@@ -72,6 +77,7 @@ def parse_arguments(sys_argv):
     parser.add_argument(
         '--out-source-tags',
         help='Source OK/BAD tags per sentence',
+        required=True,
         type=str
     )
     parser.add_argument(
@@ -81,9 +87,6 @@ def parse_arguments(sys_argv):
         type=str
     )
     args = parser.parse_args(sys_argv)
-
-    if SOURCE_ERRORS:
-        assert args.out_source_tags, "--out-source-tags required"
 
     return args
 
@@ -130,12 +133,14 @@ def get_quality_tags(mt_tokens, pe_tokens, pe_mt_alignments, pe2source):
     # Word + Gap Tags
     target_tags = []
     source_tags = []
+    error_detail = []
     for sentence_index in range(len(mt_tokens)):
 
         # Variables for this sentence
         sent_tags = []
         sent_deletion_indices = []
         source_sentence_bad_indices = set()
+        error_detail_sent = []
         mt_position = 0
 
         # Loop over alignments. This has the length of the edit-distance aligned
@@ -147,22 +152,40 @@ def get_quality_tags(mt_tokens, pe_tokens, pe_mt_alignments, pe2source):
                 # Deleted word error (need to store for later)
                 sent_deletion_indices.append(mt_position-1)
 
-                if SOURCE_ERRORS:
-                    # Aligned words in the source are BAD
-                    # RULE: If word exists elsewhere in the sentence do not
-                    # propagate error to the source.
-                    if (
-                        pe_tokens[sentence_index][pe_idx] not in
-                        mt_tokens[sentence_index]
-                    ):
-                        source_sentence_bad_indices |= \
-                            set(pe2source[sentence_index][pe_idx])
+                source_positions = None
+                # Aligned words in the source are BAD
+                # RULE: If word exists elsewhere in the sentence do not
+                # propagate error to the source.
+                if (
+                    pe_tokens[sentence_index][pe_idx] not in
+                    mt_tokens[sentence_index]
+                ):
+                    source_positions = pe2source[sentence_index][pe_idx]
+                    source_sentence_bad_indices |= set(source_positions)
+                    error_type = 'deletion'
+                else:
+                    error_type = 'deletion (shift)'
+
+                # Store error detail
+                error_detail_sent.append({
+                    'type': error_type,
+                    'gap_position': mt_position-1,
+                    'target_position': mt_idx,
+                    'source_positions': source_positions,
+                })
 
             elif pe_idx is None:
 
                 # Insertion error
                 sent_tags.append('BAD')
                 mt_position += 1
+
+                # Store error detail
+                error_detail_sent.append({
+                    'type': 'insertion',
+                    'target_position': mt_idx,
+                    'source_positions': None,
+                })
 
             elif (
                 mt_tokens[sentence_index][mt_idx] !=
@@ -173,16 +196,26 @@ def get_quality_tags(mt_tokens, pe_tokens, pe_mt_alignments, pe2source):
                 sent_tags.append('BAD')
                 mt_position += 1
 
-                if SOURCE_ERRORS:
-                    # Aligned words in the source are BAD
-                    # RULE: If word exists elsewhere in the sentence do not
-                    # propagate error to the source.
-                    if (
-                        pe_tokens[sentence_index][pe_idx] not in
-                        mt_tokens[sentence_index]
-                    ):
-                        source_sentence_bad_indices |= \
-                            set(pe2source[sentence_index][pe_idx])
+                # Aligned words in the source are BAD
+                # RULE: If word exists elsewhere in the sentence do not
+                # propagate error to the source.
+                source_positions = None
+                if (
+                    pe_tokens[sentence_index][pe_idx] not in
+                    mt_tokens[sentence_index]
+                ):
+                    source_positions = pe2source[sentence_index][pe_idx]
+                    source_sentence_bad_indices |= set(source_positions)
+                    error_type = 'substitution'
+                else:
+                    error_type = 'substitution (shift)'
+
+                # Store error detail
+                error_detail_sent.append({
+                    'type': error_type,
+                    'target_position': mt_idx,
+                    'source_positions': source_positions,
+                })
 
             else:
 
@@ -210,13 +243,15 @@ def get_quality_tags(mt_tokens, pe_tokens, pe_mt_alignments, pe2source):
         else:
             target_tags.append(sent_tags)
 
-        if SOURCE_ERRORS:
-            # Convert BAD source indices into indices
-            source_sentence_bad_tags = \
-                ['OK'] * len(source_tokens[sentence_index])
-            for index in list(source_sentence_bad_indices):
-                source_sentence_bad_tags[index] = 'BAD'
-            source_tags.append(source_sentence_bad_tags)
+        # Convert BAD source indices into indices
+        source_sentence_bad_tags = \
+            ['OK'] * len(source_tokens[sentence_index])
+        for index in list(source_sentence_bad_indices):
+            source_sentence_bad_tags[index] = 'BAD'
+        source_tags.append(source_sentence_bad_tags)
+
+        #
+        error_detail.append(error_detail_sent)
 
     # Basic sanity checks
     assert all(
@@ -226,7 +261,7 @@ def get_quality_tags(mt_tokens, pe_tokens, pe_mt_alignments, pe2source):
         [len(aa) == len(bb) for aa, bb in zip(source_tokens, source_tags)]
     ), "tag creation failed"
 
-    return source_tags, target_tags
+    return source_tags, target_tags, error_detail
 
 
 def write_tags(output_file, tags):
@@ -235,6 +270,11 @@ def write_tags(output_file, tags):
             tags_line = " ".join(sent_tags)
             fid.write("%s\n" % tags_line)
 
+
+def write_error_detail(output_file, error_detail):
+    with open(output_file, 'w') as fid:
+        for error_sent in error_detail:
+            fid.write("%s\n" % json.dumps(error_sent))
 
 if __name__ == '__main__':
 
@@ -251,16 +291,24 @@ if __name__ == '__main__':
     ) = read_data(args)
 
     # GET TAGS FOR SOURCE AND TARGET
-    source_tags, target_tags = get_quality_tags(
+    source_tags, target_tags, error_detail = get_quality_tags(
         mt_tokens,
         pe_tokens,
         pe_mt_alignments,
         pe2source
     )
 
+    # Store a more details summary of errors
+    error_detail_flat = list(chain.from_iterable(error_detail))
+    print(Counter(map(itemgetter('type'), error_detail_flat)))
+    dirname = os.path.dirname(args.out_source_tags)
+    basename = os.path.basename(args.out_source_tags).split('.')[0]
+    error_detail_json = "%s/%s.json" % (dirname, basename)
+    write_error_detail(error_detail_json, error_detail)
+    print("Wrote %s" % error_detail_json)
+
     # WRITE DATA
-    if SOURCE_ERRORS:
-        write_tags(args.out_source_tags, source_tags)
-        print("Wrote %s" % args.out_source_tags)
+    write_tags(args.out_source_tags, source_tags)
+    print("Wrote %s" % args.out_source_tags)
     write_tags(args.out_target_tags, target_tags)
     print("Wrote %s" % args.out_target_tags)

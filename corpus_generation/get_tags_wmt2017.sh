@@ -30,7 +30,7 @@ for language_pair in en-de de-en;do
         out_temporal_folder=../DATA/temporal_files/$folder/
 
         # Get tags for this set
-        echo "Getting tasg for $language_pair: $dataset"
+        echo "Getting tags for $language_pair: $dataset"
         bash tools/get_tags.sh \
             ../DATA/$folder/${dataset}.src \
             ../DATA/$folder/${dataset}.mt \
@@ -39,8 +39,7 @@ for language_pair in en-de de-en;do
             $out_temporal_folder \
             $out_temporal_folder/${dataset}.src-pe.alignments \
             $out_temporal_folder/${dataset}.pe-mt.edit_alignments \
-            $out_temporal_folder/${dataset}.tags \
-            $out_temporal_folder/${dataset}.bad_tags 
-        
+            $out_temporal_folder/${dataset}.source_tags \
+            $out_temporal_folder/${dataset}.tags 
     done
 done
