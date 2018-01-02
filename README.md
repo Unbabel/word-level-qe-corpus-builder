@@ -37,6 +37,18 @@ If you are sucesful the following file should be available
 
 where `<version>` is the tercom version.
 
+## macOS Specifics
+
+Make sure you have `coreutils` installed
+
+ - Install with anaconda:
+ 
+        conda install -c bioconda coreutils
+    
+ - Install with brew
+ 
+        brew install coreutils
+    
 ## Generating the first version of the tags 
 
 You will need to train fast align from a sufficienlty big corpus. Current
