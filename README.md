@@ -14,12 +14,13 @@ systems this can be done with
     unzip master.zip
     rm master.zip
     
-Then follow 
+Then 
 
-    fast_align-master/README.md 
-    
-to install. Note that you will need some extra utilities described there.
-Ubuntu friendly commands are given in the README.md. 
+    cd fast_align-master/
+
+and follow the `README.md` instructions to install to install. Note that you
+will need some extra utilities described there. Ubuntu friendly commands are
+given in the README.md. This should create
 
     ./external_tools/fast_align-master/build/fast_align  
 
@@ -37,18 +38,7 @@ If you are sucesful the following file should be available
 
 where `<version>` is the tercom version.
 
-## macOS Specifics
-
-Make sure you have `coreutils` installed
-
- - Install with anaconda:
- 
-        conda install -c bioconda coreutils
-    
- - Install with brew
- 
-        brew install coreutils
-    
+   
 ## Generating the first version of the tags 
 
 You will need to train fast align from a sufficienlty big corpus. Current
