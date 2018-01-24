@@ -1,5 +1,9 @@
-Redefine Word Quality Estimation
+Word Quality Estimation for NMT
 ======
+
+This is an updated version of the WMT word-level quality estimation task (Bojar et al 2017) that takes into account both fluency and adequacy issues. It requires not only the detection of wrong words but also insertion errors. It also requires as well detecting words in the source that can be related to errors on the target side.  
+
+The tags are determined using the tools in previous WMT editions (fast_align, tercom) with minor changes. Namely alignments are used to determine source words that can be related to target side errors and one or more consecutive insertions after tercom alignment are indicated as a single gap (insertion) error.
 
 # Following tools are needed
 
@@ -26,7 +30,11 @@ given in the README.md. This should create
 
 ## Install Tercom
 
-Just dowload the tool and decompress it
+Just go to
+
+    http://www.cs.umd.edu/~snover/tercom/
+
+dowload the latest version of the tool and decompress it
 
     cd ./external_tools
     wget http://www.cs.umd.edu/~snover/tercom/tercom-<version>.tgz
@@ -45,7 +53,14 @@ You will need to train fast align from a sufficienlty big corpus. Current
 example uses WMT2017 QE-task2 data which is unsufficient. Uncompress the
 WMT2017 data on a `DATA` folder. This should look like
 
-    DATA/task2_en-de_training/
+    mkdir DATA
+    DATA/task2_de-en_training
+    DATA/task2_de-en_training-dev
+    DATA/task2_de-en_dev         
+    DATA/task2_en-de_dev  
+    DATA/task2_en-de_training
+    DATA/task2_de-en_test
+    DATA/task2_en-de_test  
 
 Then train `fast_align` with
 
