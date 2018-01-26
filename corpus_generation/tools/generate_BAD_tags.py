@@ -86,6 +86,12 @@ def parse_arguments(sys_argv):
         required=True,
         type=str
     )
+    parser.add_argument(
+        '--fluency-rule',
+        help='Rules used to determine source tags',
+        choices=['ignore-shift-set', 'normal', 'missing-only'],
+        type=str
+    )
     args = parser.parse_args(sys_argv)
 
     return args
@@ -128,7 +134,8 @@ def read_data(args):
     )
 
 
-def get_quality_tags(mt_tokens, pe_tokens, pe_mt_alignments, pe2source):
+def get_quality_tags(mt_tokens, pe_tokens, pe_mt_alignments, pe2source,
+                     fluency_rule=None):
 
     # Word + Gap Tags
     target_tags = []
@@ -152,19 +159,29 @@ def get_quality_tags(mt_tokens, pe_tokens, pe_mt_alignments, pe2source):
                 # Deleted word error (need to store for later)
                 sent_deletion_indices.append(mt_position-1)
 
-                source_positions = None
-                # Aligned words in the source are BAD
-                # RULE: If word exists elsewhere in the sentence do not
-                # propagate error to the source.
-                if (
-                    pe_tokens[sentence_index][pe_idx] not in
-                    mt_tokens[sentence_index]
-                ):
+                if fluency_rule == 'normal' or fluency_rule == "missing-only":
+
                     source_positions = pe2source[sentence_index][pe_idx]
                     source_sentence_bad_indices |= set(source_positions)
                     error_type = 'deletion'
+
+                elif fluency_rule == 'ignore-shift-set':
+
+                    # RULE: If word exists elsewhere in the sentence do not
+                    # propagate error to the source.
+                    if (
+                        pe_tokens[sentence_index][pe_idx] not in
+                        mt_tokens[sentence_index]
+                    ):
+                        source_positions = pe2source[sentence_index][pe_idx]
+                        source_sentence_bad_indices |= set(source_positions)
+                        error_type = 'deletion'
+                    else:
+                        source_positions = None
+                        error_type = 'deletion (shift)'
+
                 else:
-                    error_type = 'deletion (shift)'
+                    raise Exception("Uknown rule %s" % fluency_rule)
 
                 # Store error detail
                 error_detail_sent.append({
@@ -196,19 +213,41 @@ def get_quality_tags(mt_tokens, pe_tokens, pe_mt_alignments, pe2source):
                 sent_tags.append('BAD')
                 mt_position += 1
 
+                source_positions = None
+
                 # Aligned words in the source are BAD
                 # RULE: If word exists elsewhere in the sentence do not
                 # propagate error to the source.
-                source_positions = None
-                if (
-                    pe_tokens[sentence_index][pe_idx] not in
-                    mt_tokens[sentence_index]
-                ):
+                if fluency_rule == 'normal':
+
                     source_positions = pe2source[sentence_index][pe_idx]
                     source_sentence_bad_indices |= set(source_positions)
                     error_type = 'substitution'
+
+                elif fluency_rule == 'ignore-shift-set':
+
+                    # RULE: If word exists elsewhere in the sentence do not
+                    # propagate error to the source.
+                    if (
+                        pe_tokens[sentence_index][pe_idx] not in
+                        mt_tokens[sentence_index]
+                    ):
+                        source_positions = pe2source[sentence_index][pe_idx]
+                        source_sentence_bad_indices |= set(source_positions)
+                        error_type = 'substitution'
+                    else:
+                        source_positions = None
+                        error_type = 'substitution (shift)'
+
+                elif fluency_rule == 'missing-only':
+
+                    source_positions = None
+                    error_type = 'substitution'
+
                 else:
-                    error_type = 'substitution (shift)'
+                    raise Exception("Uknown rule %s" % fluency_rule)
+
+
 
                 # Store error detail
                 error_detail_sent.append({
@@ -295,7 +334,8 @@ if __name__ == '__main__':
         mt_tokens,
         pe_tokens,
         pe_mt_alignments,
-        pe2source
+        pe2source,
+        fluency_rule=args.fluency_rule
     )
 
     # Store a more details summary of errors

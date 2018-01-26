@@ -17,10 +17,11 @@ out_mt_alignments=$6
 out_edit_alignments=$7
 out_source_tags=$8
 out_target_tags=$9
+fluency_rule=${10}
 
 # Cleanup temp
 [ -d "$out_temporal_folder" ] && rm -R "$out_temporal_folder"
-mkdir "$out_temporal_folder"    
+mkdir -p "$out_temporal_folder"    
 
 # Generate source-target alignments
 echo "Generating alignments"
@@ -48,4 +49,5 @@ python ./tools/generate_BAD_tags.py \
     --in-source-pe-alignments $out_mt_alignments \
     --in-pe-mt-alignments $out_edit_alignments \
     --out-source-tags $out_source_tags \
-    --out-target-tags $out_target_tags
+    --out-target-tags $out_target_tags \
+    --fluency-rule $fluency_rule

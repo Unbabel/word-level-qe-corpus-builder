@@ -19,7 +19,6 @@ for language_pair in en-de de-en;do
 
     echo $language_pair
     
-    # In Variables
     # Out Variables
     out_temporal_folder=../DATA/temporal_files/fast_align_train_${language_pair}
     out_fast_align_folder=../DATA/fast_align_models/${language_pair}/
@@ -29,7 +28,7 @@ for language_pair in en-de de-en;do
     mkdir -p "$out_temporal_folder"    
     
     # Train forward and backward models for fast align
-    echo "Training fast_align"
+    echo "Training fast_align ${language_pair}"
     bash ./tools/train_fast_align.sh \
         ../DATA/task2_${language_pair}_training/train.src \
         ../DATA/task2_${language_pair}_training/train.pe \

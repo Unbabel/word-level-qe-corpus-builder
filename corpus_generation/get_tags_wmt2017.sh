@@ -16,6 +16,18 @@ if [ ! -d "tools/" ];then
     exit        
 fi
 
+# Define rule
+# normal               All BAD tokens are propagated to their aligned words
+# ignore-shift-set     if a BAD token apears also in PE do not propagate to source
+# missing-only         only propagate for missing words
+fluency_rule="missing-only"  
+
+# Define alignment model
+alignment_model_folder=../DATA/fast_align_models/taus/ 
+
+# Temporal folder
+TEMPORAL_FOLDER=../DATA/temporal_files/$fluency_rule/
+
 # Loop over language pairs
 for language_pair in en-de de-en;do
     # Loop over sets
@@ -27,7 +39,7 @@ for language_pair in en-de de-en;do
         else
             folder=task2_${language_pair}_${dataset}
         fi
-        out_temporal_folder=../DATA/temporal_files/$folder/
+        out_temporal_folder=$TEMPORAL_FOLDER/$folder/
 
         # Get tags for this set
         echo "Getting tags for $language_pair: $dataset"
@@ -35,11 +47,12 @@ for language_pair in en-de de-en;do
             ../DATA/$folder/${dataset}.src \
             ../DATA/$folder/${dataset}.mt \
             ../DATA/$folder/${dataset}.pe \
-            ../DATA/fast_align_models/${language_pair}/ \
+            $alignment_model_folder/${language_pair}/ \
             $out_temporal_folder \
             $out_temporal_folder/${dataset}.src-pe.alignments \
             $out_temporal_folder/${dataset}.pe-mt.edit_alignments \
             $out_temporal_folder/${dataset}.source_tags \
-            $out_temporal_folder/${dataset}.tags 
+            $out_temporal_folder/${dataset}.tags  \
+            $fluency_rule
     done
 done
