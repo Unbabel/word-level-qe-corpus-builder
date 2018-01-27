@@ -13,7 +13,7 @@ in_mt_file=$2
 in_pe_file=$3
 in_fast_align_folder=$4
 out_temporal_folder=$5
-out_mt_alignments=$6
+out_src_pe_alignments=$6
 out_edit_alignments=$7
 out_source_tags=$8
 out_target_tags=$9
@@ -30,7 +30,7 @@ bash ./tools/align.sh \
     $in_pe_file \
     $in_fast_align_folder \
     $out_temporal_folder/fast_align/ \
-    $out_mt_alignments
+    $out_src_pe_alignments
 
 # Generate tercom target-side alignments 
 echo "Generating Tercom alignments"
@@ -46,7 +46,7 @@ python ./tools/generate_BAD_tags.py \
     --in-source-tokens $in_source_file \
     --in-mt-tokens $in_mt_file \
     --in-pe-tokens $in_pe_file \
-    --in-source-pe-alignments $out_mt_alignments \
+    --in-source-pe-alignments $out_src_pe_alignments \
     --in-pe-mt-alignments $out_edit_alignments \
     --out-source-tags $out_source_tags \
     --out-target-tags $out_target_tags \

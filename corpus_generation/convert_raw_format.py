@@ -38,7 +38,7 @@ def convert_corpus(raw_file, out_folder, label):
 
 if __name__ == '__main__':
 
-    for sset in ['en-lv.nmt', 'en-lv.nmt', 'en-cs.smt']:
+    for sset in ['en-lv.nmt', 'en-lv.smt', 'en-cs.smt']:
 
         # Train
         raw_file = '../DATA/WMT2018/RAW/%s.pre-processed' % sset
