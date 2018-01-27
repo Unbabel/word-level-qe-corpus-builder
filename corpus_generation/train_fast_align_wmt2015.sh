@@ -21,8 +21,8 @@ for language_pair in en-es;do
     
     # In Variables
     # Out Variables
-    out_temporal_folder=../DATA/temporal_files/fast_align_train_${language_pair}
-    out_fast_align_folder=../DATA/fast_align_models/${language_pair}/
+    out_temporal_folder=../DATA/WMT2015/temporal_files/fast_align_train_${language_pair}/
+    out_fast_align_folder=../DATA/WMT2015/fast_align_models/${language_pair}/
    
     # For fast align models
     [ -d "$out_temporal_folder" ] && rm -R "$out_temporal_folder"
