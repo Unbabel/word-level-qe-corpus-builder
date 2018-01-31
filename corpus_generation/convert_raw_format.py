@@ -39,7 +39,7 @@ def convert_corpus(raw_file, out_folder, label):
 if __name__ == '__main__':
 
     for sset in ['train', 'dev', 'test']:
-        for language_engine in ['en-lv.nmt', 'en-lv.smt', 'en-cs.smt']:
+        for language_engine in ['de-en.smt', 'en-cs.smt', 'en-de.nmt', 'en-de.smt', 'en-lv.nmt', 'en-lv.smt']:
             # WMT2018/RAW/de-en.smt.test.pre-processed_final
             raw_file = '../DATA/WMT2018/RAW/%s.%s.pre-processed_final' % (language_engine, sset)
             out_folder = '../DATA/WMT2018/task2_%s_%s/' % (language_engine, sset)
