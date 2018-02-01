@@ -27,7 +27,7 @@ def write_file(file_path, sentences):
 
 def convert_corpus(raw_file, out_folder, label):
     if not os.path.isdir(out_folder):
-        os.mkdir(out_folder)
+        os.makedirs(out_folder)
     src_sents, mt_sents, pe_sents, ref_sents = read_raw(raw_file)
     write_file('%s/%s.src' % (out_folder, label), src_sents)
     write_file('%s/%s.mt' % (out_folder, label), mt_sents)
@@ -38,9 +38,19 @@ def convert_corpus(raw_file, out_folder, label):
 
 if __name__ == '__main__':
 
+    # Normal set
     for sset in ['train', 'dev', 'test']:
-        for language_engine in ['de-en.smt', 'en-cs.smt', 'en-de.nmt', 'en-de.smt', 'en-lv.nmt', 'en-lv.smt']:
+        for language_engine in [
+            'de-en.smt', 'en-cs.smt', 'en-de.nmt', 'en-de.smt', 'en-lv.nmt',
+            'en-lv.smt'
+        ]:
             # WMT2018/RAW/de-en.smt.test.pre-processed_final
             raw_file = '../DATA/WMT2018/RAW/%s.%s.pre-processed_final' % (language_engine, sset)
             out_folder = '../DATA/WMT2018/task2_%s_%s/' % (language_engine, sset)
-            convert_corpus(raw_file, out_folder, 'train')
+            convert_corpus(raw_file, out_folder, sset)
+
+    # Num normalized set
+    for sset in ['train', 'dev', 'test']:
+            raw_file = '../DATA/WMT2018/NUM_PREPRO/RAW/en-lv.nmt.%s.fully-pre-processed_final' % sset
+            out_folder = '../DATA/WMT2018/NUM_PREPRO/task2_en-lv.nmt_%s/' % sset
+            convert_corpus(raw_file, out_folder, sset)

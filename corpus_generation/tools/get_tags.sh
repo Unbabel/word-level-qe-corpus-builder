@@ -14,23 +14,33 @@ in_pe_file=$3
 in_fast_align_folder=$4
 out_temporal_folder=$5
 out_src_pe_alignments=$6
-out_edit_alignments=$7
-out_source_tags=$8
-out_target_tags=$9
-fluency_rule=${10}
+out_src_mt_alignments=$7
+out_edit_alignments=$8
+out_source_tags=$9
+out_target_tags=${10}
+fluency_rule=${11}
 
 # Cleanup temp
 [ -d "$out_temporal_folder" ] && rm -R "$out_temporal_folder"
 mkdir -p "$out_temporal_folder"    
 
 # Generate source-target alignments
-echo "Generating alignments"
+echo "Generating src-pe alignments"
 bash ./tools/align.sh \
     $in_source_file \
     $in_pe_file \
     $in_fast_align_folder \
     $out_temporal_folder/fast_align/ \
     $out_src_pe_alignments
+
+# Generate source-mt alignments
+echo "Generating src-mt alignments"
+bash ./tools/align.sh \
+    $in_source_file \
+    $in_mt_file \
+    $in_fast_align_folder \
+    $out_temporal_folder/fast_align/ \
+    $out_src_mt_alignments
 
 # Generate tercom target-side alignments 
 echo "Generating Tercom alignments"

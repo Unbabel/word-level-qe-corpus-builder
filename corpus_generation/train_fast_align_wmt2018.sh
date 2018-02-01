@@ -14,26 +14,49 @@ if [ ! -d "tools/" ];then
 fi
 
 OUT_FOLDER="../DATA/WMT2018"
- 
-# Loop over language pairs
-for language_pair in en-cs.smt en-lv.smt en-lv.nmt;do
 
-    echo $language_pair
-    
-    # Out Variables
-    out_temporal_folder=$OUT_FOLDER/temporal_files/fast_align_train/${language_pair}/
-    out_fast_align_folder=$OUT_FOLDER/fast_align_models/${language_pair}/
-   
-    # For fast align models
-    [ -d "$out_temporal_folder" ] && rm -R "$out_temporal_folder"
-    mkdir -p "$out_temporal_folder"    
-    
-    # Train forward and backward models for fast align
-    echo "Training fast_align ${language_pair}"
-    bash ./tools/train_fast_align.sh \
-        $OUT_FOLDER/task2_${language_pair}_training/train.src \
-        $OUT_FOLDER/task2_${language_pair}_training/train.pe \
-        $out_temporal_folder \
-        $out_fast_align_folder
-    
-done
+# en-de.nmt
+# en-de.smt?
+#language_pair="en-de.nmt"
+#echo $language_pair
+## Train forward and backward models for fast align
+#echo "Training fast_align ${language_pair}"
+#bash ./tools/train_fast_align.sh \
+#    $OUT_FOLDER/aligner_training_data/en-de/train.tok.en.tc \
+#    $OUT_FOLDER/aligner_training_data/en-de/train.tok.de.tc \
+#    $OUT_FOLDER/temporal_files/fast_align_train/${language_pair}/ \
+#    $OUT_FOLDER/fast_align_models/${language_pair}/
+#
+## de-en.smt  
+#language_pair="de-en.smt"
+#echo $language_pair
+## Train forward and backward models for fast align
+#echo "Training fast_align ${language_pair}"
+#bash ./tools/train_fast_align.sh \
+#    $OUT_FOLDER/aligner_training_data/de-en/train.tok.de.tc \
+#    $OUT_FOLDER/aligner_training_data/de-en/train.tok.en.tc \
+#    $OUT_FOLDER/temporal_files/fast_align_train/${language_pair}/ \
+#    $OUT_FOLDER/fast_align_models/${language_pair}/
+
+# en-cs.smt    
+language_pair="en-cs.smt"
+echo $language_pair
+# Train forward and backward models for fast align
+echo "Training fast_align ${language_pair}"
+bash ./tools/train_fast_align.sh \
+    $OUT_FOLDER/aligner_training_data/en-cs/train.en \
+    $OUT_FOLDER/aligner_training_data/en-cs/train.cs \
+    $OUT_FOLDER/temporal_files/fast_align_train/${language_pair}/ \
+    $OUT_FOLDER/fast_align_models/${language_pair}/
+
+## en-lv.nmt
+## en-lv.smt?
+#language_pair="en-lv.nmt"
+#echo $language_pair
+## Train forward and backward models for fast align
+#echo "Training fast_align ${language_pair}"
+#bash ./tools/train_fast_align.sh \
+#    $OUT_FOLDER/NUM_PREPRO/aligner_training_data/en-lv/train.en \
+#    $OUT_FOLDER/NUM_PREPRO/aligner_training_data/en-lv/train.lv \
+#    $OUT_FOLDER/NUM_PREPRO/temporal_files/fast_align_train/${language_pair}/ \
+#    $OUT_FOLDER/NUM_PREPRO/fast_align_models/${language_pair}/
