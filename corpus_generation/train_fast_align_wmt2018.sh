@@ -50,17 +50,17 @@ bash ./tools/train_fast_align.sh \
 # en-de.smt
 ln -s $OUT_FOLDER/fast_align_models/${language_pair}/ $OUT_FOLDER/fast_align_models/en-de.smt
 
-# en-lv.nmt
-# en-lv.smt?
-language_pair="en-lv.nmt"
-echo $language_pair
-# Train forward and backward models for fast align
-echo "Training fast_align ${language_pair}"
-bash ./tools/train_fast_align.sh \
-    $OUT_FOLDER/NUM_PREPRO/aligner_training_data/en-lv/train.en \
-    $OUT_FOLDER/NUM_PREPRO/aligner_training_data/en-lv/train.lv \
-    $OUT_FOLDER/NUM_PREPRO/temporal_files/fast_align_train/${language_pair}/ \
-    $OUT_FOLDER/NUM_PREPRO/fast_align_models/${language_pair}/
+## en-lv.nmt
+## en-lv.smt?
+#language_pair="en-lv.nmt"
+#echo $language_pair
+## Train forward and backward models for fast align
+#echo "Training fast_align ${language_pair}"
+#bash ./tools/train_fast_align.sh \
+#    $OUT_FOLDER/NUM_PREPRO/aligner_training_data/en-lv/train.en \
+#    $OUT_FOLDER/NUM_PREPRO/aligner_training_data/en-lv/train.lv \
+#    $OUT_FOLDER/NUM_PREPRO/temporal_files/fast_align_train/${language_pair}/ \
+#    $OUT_FOLDER/NUM_PREPRO/fast_align_models/${language_pair}/
 
 # en-lv.nmt
 language_pair="en-lv.nmt"
