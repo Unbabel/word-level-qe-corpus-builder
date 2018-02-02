@@ -57,5 +57,5 @@ for language_pair in de-en.smt en-cs.smt en-de.nmt en-de.smt en-lv.nmt en-lv.smt
     done
 done
 
-# Here alignments are computes with other normalization
+# Here alignments are computed with other normalization
 #bash tools/get_tags_en_lv.sh 
