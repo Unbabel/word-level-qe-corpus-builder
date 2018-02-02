@@ -30,6 +30,9 @@ def check_out_of_bounds(tokens, alignments, source=True):
         else:
             max_index = max([x[1] for x in alignments[sent_index]])
         if max_index >= length:
+            print("Sentence Index: %d" % sent_index)
+            print(tokens[sent_index])
+            print(alignments[sent_index])
             raise Exception(
                 "Tercom alignments and original tokens do not match."
                 "Likely an enconding problem"

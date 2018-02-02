@@ -7,20 +7,31 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+# normaly this are defined in the father script
+fluency_rule="normal"  
+OUT_FOLDER="../DATA/WMT2018"
+TEMPORAL_FOLDER=$OUT_FOLDER/temporal_files/$fluency_rule/
+
 # Loop over sets
+language_pair="en-lv.nmt"
 for dataset in train dev test;do
 
+    folder=task2_${language_pair}_${dataset}
+    out_temporal_folder=$TEMPORAL_FOLDER/$folder/
+
+    alignment_model_folder=$OUT_FOLDER/fast_align_models/
     # Cleanup temp
     [ -d "$out_temporal_folder" ] && rm -R "$out_temporal_folder"
     mkdir -p "$out_temporal_folder"    
 
-    in_source_file_NUM_PREPRO=../DATA/WMT2018/NUM_PREPRO/task2_en-lv.nmt_${dataset}/${dataset}.src \
-    in_mt_file_NUM_PREPRO=../DATA/WMT2018/NUM_PREPRO/task2_en-lv.nmt_${dataset}/${dataset}.mt \
-    in_pe_file_NUM_PREPRO=../DATA/WMT2018/NUM_PREPRO/task2_en-lv.nmt_${dataset}/${dataset}.pe \
-    in_fast_align_folder_NUM_PREPRO=../DATA/WMT2018/NUM_PREPRO/fast_align_models/en-lv.nmt/
- 
-    out_src_pe_alignments=$out_temporal_folder/${dataset}.src-pe.alignments \
-    out_src_mt_alignments=../DATA/WMT2018/task2_en-lv.nmt_${dataset}/${dataset}.src-mt.alignments \
+    # Differently normalized en-lv dataset
+    in_source_file_NUM_PREPRO=$OUT_FOLDER/NUM_PREPRO/task2_${language_pair}_${dataset}/${dataset}.src 
+    in_mt_file_NUM_PREPRO=$OUT_FOLDER/NUM_PREPRO/task2_${language_pair}_${dataset}/${dataset}.mt 
+    in_pe_file_NUM_PREPRO=$OUT_FOLDER/NUM_PREPRO/task2_${language_pair}_${dataset}/${dataset}.pe 
+    in_fast_align_folder_NUM_PREPRO=$OUT_FOLDER/NUM_PREPRO/fast_align_models/${language_pair}/
+    # We use the alignments for our normal set 
+    out_src_pe_alignments=$out_temporal_folder/${dataset}.src-pe.alignments 
+    out_src_mt_alignments=$OUT_FOLDER/task2_${language_pair}_${dataset}/${dataset}.src-mt.alignments 
     
     # Generate source-target alignments
     echo "Generating src-pe alignments"
@@ -41,14 +52,13 @@ for dataset in train dev test;do
         $out_src_mt_alignments
 
     # ARGUMENTS
-    in_source_file=../DATA/WMT2018/task2_en-lv.nmt_${dataset}/${dataset}.src \
-    in_mt_file=../DATA/WMT2018/task2_en-lv.nmt_${dataset}/${dataset}.mt \
-    in_pe_file=../DATA/WMT2018/task2_en-lv.nmt_${dataset}/${dataset}.pe \
-    in_fast_align_folder=$alignment_model_folder/${language_pair}/ \
-    out_temporal_folder=$out_temporal_folder \
-    out_edit_alignments=$out_temporal_folder/${dataset}.pe-mt.edit_alignments \
-    out_source_tags=../DATA/WMT2018/task2_en-lv.nmt_${dataset}/${dataset}.source_tags \
-    out_target_tags=../DATA/WMT2018/task2_en-lv.nmt_${dataset}/${dataset}.tags  \
+    in_source_file=$OUT_FOLDER/task2_${language_pair}_${dataset}/${dataset}.src 
+    in_mt_file=$OUT_FOLDER/task2_${language_pair}_${dataset}/${dataset}.mt 
+    in_pe_file=$OUT_FOLDER/task2_${language_pair}_${dataset}/${dataset}.pe 
+    out_temporal_folder=$out_temporal_folder 
+    out_edit_alignments=$out_temporal_folder/${dataset}.pe-mt.edit_alignments 
+    out_source_tags=$OUT_FOLDER/task2_${language_pair}_${dataset}/${dataset}.source_tags 
+    out_target_tags=$OUT_FOLDER/task2_${language_pair}_${dataset}/${dataset}.tags  
     fluency_rule=$fluency_rule
  
     # Generate tercom target-side alignments 

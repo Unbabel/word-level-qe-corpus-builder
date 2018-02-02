@@ -32,7 +32,7 @@ alignment_model_folder=$OUT_FOLDER/fast_align_models/
 TEMPORAL_FOLDER=$OUT_FOLDER/temporal_files/$fluency_rule/
 
 # Loop over language pairs
-for language_pair in de-en.smt en-cs.smt en-de.nmt en-de.smt;do
+for language_pair in de-en.smt en-cs.smt en-de.nmt en-de.smt en-lv.nmt en-lv.smt;do
     # Loop over sets
     for dataset in train dev test;do
 
