@@ -1,5 +1,6 @@
 import codecs
 import os
+from tqdm import tqdm
 
 
 def read_raw(file_path):
@@ -32,20 +33,20 @@ def idsort(sentences, ids, target_ids):
     return [sents_by_id[id] for id in target_ids]
 
 
-def convert_corpus(raw_file, out_folder, label, sort_sids=None):
+def convert_corpus(raw_file, out_folder, label):
+    sids, src_sents, mt_sents, pe_sents, ref_sents = read_raw(raw_file)
+    save_corpus(out_folder, src_sents, mt_sents, pe_sents, ref_sents, label)
+
+
+def save_corpus(out_folder, src_sents, mt_sents, pe_sents, ref_sents, label):
+    # Create
     if not os.path.isdir(out_folder):
         os.makedirs(out_folder)
-    sids, src_sents, mt_sents, pe_sents, ref_sents = read_raw(raw_file)
-    if sort_sids is not None:
-        write_file('%s/%s.src' % (out_folder, label), idsort(src_sents, sids, sort_sids))
-        write_file('%s/%s.mt' % (out_folder, label), idsort(mt_sents, sids, sort_sids))
-        write_file('%s/%s.pe' % (out_folder, label), idsort(pe_sents, sids, sort_sids))
-        write_file('%s/%s.ref' % (out_folder, label), idsort(ref_sents, sids, sort_sids))
-    else:
-        write_file('%s/%s.src' % (out_folder, label), src_sents)
-        write_file('%s/%s.mt' % (out_folder, label), mt_sents)
-        write_file('%s/%s.pe' % (out_folder, label), pe_sents)
-        write_file('%s/%s.ref' % (out_folder, label), ref_sents)
+    # Write files
+    write_file('%s/%s.src' % (out_folder, label), src_sents)
+    write_file('%s/%s.mt' % (out_folder, label), mt_sents)
+    write_file('%s/%s.pe' % (out_folder, label), pe_sents)
+    write_file('%s/%s.ref' % (out_folder, label), ref_sents)
     print('%s -> %s' % (raw_file, out_folder))
 
 
@@ -65,10 +66,29 @@ if __name__ == '__main__':
             out_folder = '../DATA/WMT2018/task2_%s_%s/' % (language_engine, sset)
             convert_corpus(raw_file, out_folder, sset)
 
-    # Num normalized set
-    for sset in ['train', 'dev', 'test']:
-        raw_file = '../DATA/WMT2018/NUM_PREPRO/RAW/en-lv.nmt.%s.fully-pre-processed_final' % sset
-        out_folder = '../DATA/WMT2018/NUM_PREPRO/task2_en-lv.nmt_%s/' % sset
-        #ref_ids = read_raw('../DATA/WMT2018/RAW/en-lv.nmt.%s.pre-processed_final' % sset)[0]
-        # convert_corpus(raw_file, out_folder, sset, sort_sids=ref_ids)
-        convert_corpus(raw_file, out_folder, sset)
+#    # Num normalized set
+#    # It is shuffled differently so we need to read all in a single block
+#    en_lv_corpus_by_id = {}
+#    for sset in ['train', 'dev', 'test']:
+#        raw_file = '../DATA/WMT2018/NUM_PREPRO/RAW/en-lv.nmt.%s.fully-pre-processed_final' % sset
+#        items = read_raw(raw_file)
+#        for sid, src_sent, mt_sent, pe_sent, ref_sent in zip(*items):
+#            en_lv_corpus_by_id[sid] = [src_sent, mt_sent, pe_sent, ref_sent]
+#
+#    for sset in ['train', 'dev', 'test']:
+#        out_folder = '../DATA/WMT2018/NUM_PREPRO/task2_en-lv.nmt_%s/' % sset
+#
+#        # Get ids for this file
+#        ref_ids = read_raw(
+#            '../DATA/WMT2018/RAW/en-lv.nmt.%s.pre-processed_final' % sset
+#        )[0]
+#        items = [en_lv_corpus_by_id[id] for id in ref_ids]
+#        # Get the ids
+#        save_corpus(
+#            out_folder,
+#            src_sents,
+#            mt_sents,
+#            pe_sents,
+#            ref_sents,
+#            sset
+#        )
