@@ -35,30 +35,30 @@ alignment_model_folder=$OUT_FOLDER/fast_align_models/
 # Temporal folder
 TEMPORAL_FOLDER=$OUT_FOLDER/temporal_files/$fluency_rule/
 
-## Loop over language pairs
-#for language_pair in en-lv.nmt en-lv.smt;do
-#    # Loop over sets
-#    for dataset in train dev test;do
-#
-#        folder=task2_${language_pair}_${dataset}
-#        out_temporal_folder=$TEMPORAL_FOLDER/$folder/
-#
-#        # Get tags for this set
-#        printf "Getting tags for \033[94m$language_pair: $dataset\033[0m\n"
-#        bash tools/get_tags.sh \
-#            $OUT_FOLDER/$folder/${dataset}.src \
-#            $OUT_FOLDER/$folder/${dataset}.mt \
-#            $OUT_FOLDER/$folder/${dataset}.pe \
-#            $alignment_model_folder/${language_pair}/ \
-#            $out_temporal_folder \
-#            $out_temporal_folder/${dataset}.src-pe.alignments \
-#            $OUT_FOLDER/$folder/${dataset}.src-mt.alignments \
-#            $out_temporal_folder/${dataset}.pe-mt.edit_alignments \
-#            $OUT_FOLDER/$folder/${dataset}.source_tags \
-#            $OUT_FOLDER/$folder/${dataset}.tags  \
-#            $fluency_rule
-#    done
-#done
+# Loop over language pairs
+for language_pair in en-lv.nmt en-lv.smt;do
+    # Loop over sets
+    for dataset in train dev test;do
+
+        folder=task2_${language_pair}_${dataset}
+        out_temporal_folder=$TEMPORAL_FOLDER/$folder/
+
+        # Get tags for this set
+        printf "Getting tags for \033[94m$language_pair: $dataset\033[0m\n"
+        bash tools/get_tags.sh \
+            $OUT_FOLDER/$folder/${dataset}.src \
+            $OUT_FOLDER/$folder/${dataset}.mt \
+            $OUT_FOLDER/$folder/${dataset}.pe \
+            $alignment_model_folder/${language_pair}/ \
+            $out_temporal_folder \
+            $out_temporal_folder/${dataset}.src-pe.alignments \
+            $OUT_FOLDER/$folder/${dataset}.src-mt.alignments \
+            $out_temporal_folder/${dataset}.pe-mt.edit_alignments \
+            $OUT_FOLDER/$folder/${dataset}.source_tags \
+            $OUT_FOLDER/$folder/${dataset}.tags  \
+            $fluency_rule
+    done
+done
 
 
 #
@@ -75,7 +75,8 @@ alignment_model_folder2=$OUT_FOLDER2/fast_align_models/
 TEMPORAL_FOLDER2=$OUT_FOLDER2/temporal_files/$fluency_rule/
 
 # Here alignments are computed with other normalization
-for language_pair in en-lv.nmt en-lv.smt;do
+#for language_pair in en-lv.nmt en-lv.smt;do
+for language_pair in en-lv.smt;do
     # Loop over sets
     for dataset in train dev test;do
 
@@ -83,7 +84,9 @@ for language_pair in en-lv.nmt en-lv.smt;do
         out_temporal_folder2=$TEMPORAL_FOLDER2/$folder/
 
         [ ! -d "$OUT_FOLDER2/$folder/" ] && { mkdir -p "$OUT_FOLDER2/$folder/"; }
-        [ ! -d "$out_temporal_folder2" ] && { mkdir -p "$out_temporal_folder2"; }
+        # Cleanup temp
+        [ -d "$out_temporal_folder2" ] && rm -R "$out_temporal_folder2"
+        mkdir -p "$out_temporal_folder2"    
 
         # Copy NUM_PREPRO alignments
         cp $TEMPORAL_FOLDER/$folder/${dataset}.src-pe.alignments $out_temporal_folder2/${dataset}.src-pe.alignments
