@@ -32,11 +32,10 @@ alignment_model_folder=$OUT_FOLDER/fast_align_models/
 TEMPORAL_FOLDER=$OUT_FOLDER/temporal_files/$fluency_rule/
 
 # Loop over language pairs
-for language_pair in de-en.smt en-cs.smt en-de.nmt en-de.smt en-lv.nmt en-lv.smt;do
+for language_pair in de-en.smt en-cs.smt en-de.nmt en-de.smt;do
     # Loop over sets
     for dataset in train dev test;do
 
-        # More uniformity in the names would be desired
         folder=task2_${language_pair}_${dataset}
         out_temporal_folder=$TEMPORAL_FOLDER/$folder/
 
@@ -56,6 +55,3 @@ for language_pair in de-en.smt en-cs.smt en-de.nmt en-de.smt en-lv.nmt en-lv.smt
             $fluency_rule
     done
 done
-
-# Here alignments are computed with other normalization
-#bash tools/get_tags_en_lv.sh 

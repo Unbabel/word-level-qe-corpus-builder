@@ -31,3 +31,4 @@ tags are propagated back to the source. The only exception is if a word is
 missing on the MT on the expected position (per tercom) but is present
 otherwhere on the MT sentence. This is considered a fluency problem rather than
 adequacy.
+

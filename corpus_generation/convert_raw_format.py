@@ -58,37 +58,41 @@ if __name__ == '__main__':
         'en-lv.smt'
     ]
 
-    # Normal set
-    for sset in ['train', 'dev', 'test']:
-        for language_engine in language_engines:
-            # WMT2018/RAW/de-en.smt.test.pre-processed_final
-            raw_file = '../DATA/WMT2018/RAW/%s.%s.pre-processed_final' % (language_engine, sset)
-            out_folder = '../DATA/WMT2018/task2_%s_%s/' % (language_engine, sset)
-            convert_corpus(raw_file, out_folder, sset)
+#    # Normal set
+#    for sset in ['train', 'dev', 'test']:
+#        for language_engine in language_engines:
+#            # WMT2018/RAW/de-en.smt.test.pre-processed_final
+#            raw_file = '../DATA/WMT2018/RAW/%s.%s.pre-processed_final' % (language_engine, sset)
+#            out_folder = '../DATA/WMT2018/task2_%s_%s/' % (language_engine, sset)
+#            convert_corpus(raw_file, out_folder, sset)
 
-#    # Num normalized set
-#    # It is shuffled differently so we need to read all in a single block
-#    en_lv_corpus_by_id = {}
-#    for sset in ['train', 'dev', 'test']:
-#        raw_file = '../DATA/WMT2018/NUM_PREPRO/RAW/en-lv.nmt.%s.fully-pre-processed_final' % sset
-#        items = read_raw(raw_file)
-#        for sid, src_sent, mt_sent, pe_sent, ref_sent in zip(*items):
-#            en_lv_corpus_by_id[sid] = [src_sent, mt_sent, pe_sent, ref_sent]
-#
-#    for sset in ['train', 'dev', 'test']:
-#        out_folder = '../DATA/WMT2018/NUM_PREPRO/task2_en-lv.nmt_%s/' % sset
-#
-#        # Get ids for this file
-#        ref_ids = read_raw(
-#            '../DATA/WMT2018/RAW/en-lv.nmt.%s.pre-processed_final' % sset
-#        )[0]
-#        items = [en_lv_corpus_by_id[id] for id in ref_ids]
-#        # Get the ids
-#        save_corpus(
-#            out_folder,
-#            src_sents,
-#            mt_sents,
-#            pe_sents,
-#            ref_sents,
-#            sset
-#        )
+    # en-lv
+    # Num normalized set
+    # It is shuffled differently so we need to read all in a single block
+    en_lv_corpus_by_id = {}
+    for machine in ['nmt', 'smt']:
+
+        # Collect all files with different normalization
+        raw_file = '../DATA/WMT2018/NUM_PREPRO/RAW/en-lv.%s.fully-pre-processed' % machine
+        items = read_raw(raw_file)
+        for sid, src_sent, mt_sent, pe_sent, ref_sent in zip(*items):
+            en_lv_corpus_by_id[sid] = [src_sent, mt_sent, pe_sent, ref_sent]
+        raw_file = '../DATA/WMT2018/NUM_PREPRO/RAW/en-lv.%s.test.fully-pre-processed' % machine
+        items = read_raw(raw_file)
+        for sid, src_sent, mt_sent, pe_sent, ref_sent in zip(*items):
+            en_lv_corpus_by_id[sid] = [src_sent, mt_sent, pe_sent, ref_sent]
+
+        for sset in ['train', 'dev', 'test']:
+            out_folder = '../DATA/WMT2018/NUM_PREPRO/task2_en-lv.%s_%s/' % (machine, sset)
+
+            # Get ids for this file
+            ref_ids = read_raw(
+                '../DATA/WMT2018/RAW/en-lv.%s.%s.pre-processed_final' % (machine, sset)
+            )[0]
+            items = [en_lv_corpus_by_id[id] for id in ref_ids]
+            src_sents, mt_sents, pe_sents, ref_sents = zip(*items)
+
+            # Get the ids
+            save_corpus(
+                out_folder, src_sents, mt_sents, pe_sents, ref_sents, sset
+            )
