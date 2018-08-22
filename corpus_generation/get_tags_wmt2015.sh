@@ -18,7 +18,7 @@ fi
 
 # Define rule
 # normal               All BAD tokens are propagated to their aligned words
-# ignore-shift-set     if a BAD token apears also in PE do not propagate to source
+# ignore-shift-set     if a BAD token appears also in PE do not propagate to source
 # missing-only         only propagate for missing words
 fluency_rule="normal"  
 
