@@ -17,7 +17,7 @@ error.
 
 ## Install Fast Align
 
-Download zip and uncompress it into the `./external_tools/` folder. In unix
+Download zip and uncompress it into the `./external_tools/` folder. In Unix
 systems this can be done with
 
     mkdir ./external_tools/
@@ -30,9 +30,17 @@ Then
 
     cd fast_align-master/
 
-and follow the `README.md` instructions to install to install. Note that you
-will need some extra utilities described there. Ubuntu friendly commands are
-given in the README.md. This should create
+check the `README.md` in that folder as there may be extra libraries needed.
+Ubuntu friendly commands are provided to instal these. With the needed
+libraries just do
+
+    mkdir build
+    build
+    cmake ..
+    make
+
+as indicated in the `fast_align-master/README.md`. If everything goes right,
+this should create
 
     ./external_tools/fast_align-master/build/fast_align  
 
@@ -42,33 +50,32 @@ Just go to
 
     http://www.cs.umd.edu/~snover/tercom/
 
-dowload the latest version of the tool and decompress it
+Download the latest version of the tool and decompress it. For the WMT2018
+corpus creation we used
 
     cd ./external_tools
-    wget http://www.cs.umd.edu/~snover/tercom/tercom-<version>.tgz
-    tar -xf tercom-<version>.tgz
+    wget http://www.cs.umd.edu/~snover/tercom/tercom-0.7.25.tgz
+    tar -xf tercom-0.7.25.tgz
 
 If you are sucesful the following file should be available
 
-    ./external_tools/tercom-<version>/tercom.<version>.jar
+    ./external_tools/tercom-0.7.25/tercom.7.25.jar
 
-where `<version>` is the tercom version.
-
-   
 ## Generating the first version of the tags 
 
-You will need to train fast align from a sufficienlty big corpus. Current
-example uses WMT2017 QE-task2 data which is unsufficient. Uncompress the
-WMT2017 data on a `DATA` folder. This should look like
+This is a simple example using WMT2017. In reality you will need to train fast
+align from a sufficiently big corpus. 
+
+Uncompress the WMT2017 data on a `DATA` folder. This should look like
 
     mkdir DATA
-    DATA/task2_de-en_training
-    DATA/task2_de-en_training-dev
-    DATA/task2_de-en_dev         
-    DATA/task2_en-de_dev  
-    DATA/task2_en-de_training
-    DATA/task2_de-en_test
-    DATA/task2_en-de_test  
+    DATA/WMT2017/task2_de-en_training
+    DATA/WMT2017/task2_de-en_training-dev
+    DATA/WMT2017/task2_de-en_dev         
+    DATA/WMT2017/task2_en-de_dev  
+    DATA/WMT2017/task2_en-de_training
+    DATA/WMT2017/task2_de-en_test
+    DATA/WMT2017/task2_en-de_test  
 
 Then train `fast_align` with
 
@@ -81,10 +88,11 @@ Once fast align is trained, call the following to generate the tags
 
 Tags are currently stored under e.g.
 
-    DATA/temporal_files/task2_en-de_training/
+    DATA/WMT2017/temporal_files/task2_en-de_training/
 
 ## Exploring the tags
 
-Use the notebook in `notebooks`
+You can explore the created tags using the notebook in `notebooks`. For this 
+you will have to install the `jupyter` Python module
 
-    notebooks/Investigate-BAD-tag-approaches.ipynb
+    jupyter-notebook notebooks/Investigate-BAD-tag-approaches.ipynb

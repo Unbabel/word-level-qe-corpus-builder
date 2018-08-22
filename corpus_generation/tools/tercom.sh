@@ -5,7 +5,7 @@ set -o nounset
 set -o pipefail
 # Root of the tools
 SCRIPT_FOLDER="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
-ROOT_FOLDER="$SCRIPT_FOLDER/../../"
+ROOT_FOLDER="${SCRIPT_FOLDER}/../../"
 
 # See the README for instructions on how to install this
 path_tercom="${ROOT_FOLDER}/external_tools/tercom-0.7.25/tercom.7.25.jar"
@@ -27,14 +27,14 @@ out_tercom_alignments_file=$4
 reference_basename=$(basename in_reference_file)
 hypothesis_basename=$(basename in_hypothesis_file)
 
-if [ ! -d "$in_work_folder" ];then
-    mkdir -p $in_work_folder
+if [ ! -d "${in_work_folder}" ];then
+    mkdir -p ${in_work_folder}
 fi
 # Format files in tercom format (SGML NIST)
 # encoding is utf-8 and quotes are scaped
 echo "Formating text"
-python ./tools/format_tercom.py $in_reference_file $in_work_folder/$reference_basename
-python ./tools/format_tercom.py $in_hypothesis_file $in_work_folder/$hypothesis_basename
+python ./tools/format_tercom.py ${in_reference_file} ${in_work_folder}/${reference_basename}
+python ./tools/format_tercom.py ${in_hypothesis_file} ${in_work_folder}/${hypothesis_basename}
 
 # Call tercom
 echo "Producing tercom XML"
@@ -61,16 +61,16 @@ echo "Producing tercom XML"
 #   -a alternative reference path, optional, this file will be only used to compute the reference length.
 #   -d maximum shift distance, optional, default is 50 words. 
 java \
-    -jar $path_tercom \
-    -r $in_work_folder/$reference_basename \
-    -h $in_work_folder/$hypothesis_basename \
-    -n $in_work_folder/$(basename out_tercom_file) \
-    -d 0 > $in_work_folder/tercom.log
+    -jar ${path_tercom} \
+    -r ${in_work_folder}/${reference_basename} \
+    -h ${in_work_folder}/${hypothesis_basename} \
+    -n ${in_work_folder}/$(basename out_tercom_file) \
+    -d 0 > ${in_work_folder}/tercom.log
 
 # Reformat
 echo "Reading XML"
 python ./tools/edit_alignments.py \
-    $in_work_folder/$(basename out_tercom_file).xml \
-    $in_hypothesis_file \
-    $in_reference_file  \
-    $out_tercom_alignments_file
+    ${in_work_folder}/$(basename out_tercom_file).xml \
+    ${in_hypothesis_file} \
+    ${in_reference_file}  \
+    ${out_tercom_alignments_file}
