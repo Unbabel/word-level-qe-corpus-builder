@@ -31,7 +31,7 @@ related to the error. Three version were considered in this freest version of
 the corpus. These can be selected inside of the `get_tags*` scripts using the
 variable `$fluency_rule`.
 
-- `normal` All BAD tokens are propagated to their aligned words
+- `normal` all BAD tokens are propagated to their aligned words
 - `ignore-shift-set` if a BAD token appears also in PE do not propagate to source
 - `missing-only` only propagate for missing words (deletions)
 

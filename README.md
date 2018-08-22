@@ -17,7 +17,7 @@ error.
 
 ## Install Fast Align
 
-Download zip and uncompress it into the `./external_tools/` folder. In unix
+Download zip and uncompress it into the `./external_tools/` folder. In Unix
 systems this can be done with
 
     mkdir ./external_tools/
@@ -50,7 +50,7 @@ Just go to
 
     http://www.cs.umd.edu/~snover/tercom/
 
-dowload the latest version of the tool and decompress it. For the WMT2018
+Download the latest version of the tool and decompress it. For the WMT2018
 corpus creation we used
 
     cd ./external_tools
@@ -64,7 +64,7 @@ If you are sucesful the following file should be available
 ## Generating the first version of the tags 
 
 This is a simple example using WMT2017. In reality you will need to train fast
-align from a sufficienlty big corpus. 
+align from a sufficiently big corpus. 
 
 Uncompress the WMT2017 data on a `DATA` folder. This should look like
 
@@ -92,7 +92,7 @@ Tags are currently stored under e.g.
 
 ## Exploring the tags
 
-Use the notebook in `notebooks`. For this you will have to install the
-`jupyter` Python module
+You can explore the created tags using the notebook in `notebooks`. For this 
+you will have to install the `jupyter` Python module
 
     jupyter-notebook notebooks/Investigate-BAD-tag-approaches.ipynb
