@@ -55,5 +55,11 @@ for language_pair in en-de de-en;do
             ${out_temporal_folder}/${dataset}.source_tags \
             ${out_temporal_folder}/${dataset}.tags \
             $fluency_rule
+
+        # Copy the original files to the new corpus
+        cp ../DATA/WMT2017/$folder/${dataset}.src ${out_temporal_folder}/
+        cp ../DATA/WMT2017/$folder/${dataset}.mt ${out_temporal_folder}/
+        cp ../DATA/WMT2017/$folder/${dataset}.pe ${out_temporal_folder}/
+
     done
 done
