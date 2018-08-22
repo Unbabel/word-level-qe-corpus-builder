@@ -5,7 +5,7 @@ set -o nounset
 set -o pipefail
 # Root of the tools. If you change the script location, this wont work!
 SCRIPT_FOLDER="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
-ROOT_FOLDER="$SCRIPT_FOLDER/../../"
+ROOT_FOLDER="${SCRIPT_FOLDER}/../../"
 
 # See the README for instructions on how to install this
 path_fast_align="${ROOT_FOLDER}/external_tools/fast_align-master/build"
@@ -39,10 +39,10 @@ fi
 
 # Concatenate data into one single file and shuffle it
 paste -d '\t' \
-    $in_source_sentences \
-    $in_target_sentences \
+    ${in_source_sentences} \
+    ${in_target_sentences} \
     | sed 's/\t/ ||| /g' \
-    > $in_work_folder/$(basename in_target_sentences).pairs
+    > ${in_work_folder}/$(basename in_target_sentences).pairs
 
 # ALIGN
 
@@ -52,7 +52,7 @@ ${path_fast_align}/force_align.py \
     ${in_fast_align_folder}/a.s2t.err \
     ${in_fast_align_folder}/a.t2s.params \
     ${in_fast_align_folder}/a.t2s.err \
-    < $in_work_folder/$(basename in_target_sentences).pairs \
-    > $out_alignments
+    < ${in_work_folder}/$(basename in_target_sentences).pairs \
+    > ${out_alignments}
 
-echo "Created $out_alignments"
+echo "Created ${out_alignments}"
