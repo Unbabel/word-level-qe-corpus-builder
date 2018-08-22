@@ -46,7 +46,7 @@ paralel_corpus=$in_work_folder/$(basename $in_target_sentences).pairs
 #echo "Created $paralel_corpus"
 
 # Remove
-python remove_aligned_to_empty.py \
+python tools/remove_aligned_to_empty.py \
 	$in_source_sentences \
 	$in_target_sentences \
 	$paralel_corpus

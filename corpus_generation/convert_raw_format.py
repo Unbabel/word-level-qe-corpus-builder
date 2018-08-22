@@ -1,6 +1,5 @@
 import codecs
 import os
-from tqdm import tqdm
 
 
 def read_raw(file_path):

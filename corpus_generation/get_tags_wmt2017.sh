@@ -20,13 +20,13 @@ fi
 # normal               All BAD tokens are propagated to their aligned words
 # ignore-shift-set     if a BAD token apears also in PE do not propagate to source
 # missing-only         only propagate for missing words
-fluency_rule="missing-only"  
+fluency_rule="normal"  
 
 # Define alignment model
-alignment_model_folder=../DATA/fast_align_models/taus/ 
+alignment_model_folder=../DATA/WMT2017/fast_align_models/
 
 # Temporal folder
-TEMPORAL_FOLDER=../DATA/temporal_files/$fluency_rule/
+TEMPORAL_FOLDER=../DATA/WMT2017/temporal_files/$fluency_rule/
 
 # Loop over language pairs
 for language_pair in en-de de-en;do
@@ -44,15 +44,16 @@ for language_pair in en-de de-en;do
         # Get tags for this set
         echo "Getting tags for $language_pair: $dataset"
         bash tools/get_tags.sh \
-            ../DATA/$folder/${dataset}.src \
-            ../DATA/$folder/${dataset}.mt \
-            ../DATA/$folder/${dataset}.pe \
+            ../DATA/WMT2017/$folder/${dataset}.src \
+            ../DATA/WMT2017/$folder/${dataset}.mt \
+            ../DATA/WMT2017/$folder/${dataset}.pe \
             $alignment_model_folder/${language_pair}/ \
-            $out_temporal_folder \
-            $out_temporal_folder/${dataset}.src-pe.alignments \
-            $out_temporal_folder/${dataset}.pe-mt.edit_alignments \
-            $out_temporal_folder/${dataset}.source_tags \
-            $out_temporal_folder/${dataset}.tags  \
+            ${out_temporal_folder} \
+            ${out_temporal_folder}/${dataset}.src-pe.alignments \
+            ${out_temporal_folder}/${dataset}.src-mt.alignments \
+            ${out_temporal_folder}/${dataset}.pe-mt.edit_alignments \
+            ${out_temporal_folder}/${dataset}.source_tags \
+            ${out_temporal_folder}/${dataset}.tags \
             $fluency_rule
     done
 done

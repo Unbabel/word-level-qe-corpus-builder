@@ -68,8 +68,6 @@ for sentence in sentences:
     # Pad source and target
     mt_indices, pe_indices = zip(*sentence['mt-pe_alignments'])
 
-    import ipdb;ipdb.set_trace(context=50)
-
     # Find words deleted on mt
     pe_indices = map(lambda x: x[1], sentence['mt-pe_alignments'])
     missing_pe_indices = [
@@ -78,9 +76,8 @@ for sentence in sentences:
     ]
 
     if missing_pe_indices:
-        import ipdb;ipdb.set_trace(context=50)
-        print("")
-
+        print("Missing Post-Edition Indices")
+        exit(1)
 
     for mt_index in range(len(sentence['mt'])):
 

@@ -2,8 +2,6 @@ import codecs
 import sys
 import subprocess
 
-from tqdm import tqdm
-
 
 def file_len(fname):
     """
@@ -36,14 +34,10 @@ if __name__ == '__main__':
         with codecs.open(in_target_file, 'r', 'utf-8') as target_fid:
             with codecs.open(out_paralel_corpus, 'w', 'utf-8') as paralel_fid:
                 faulty_lines = 0
-                for line_n in tqdm(xrange(nr_lines2)):
+                for line_n in xrange(nr_lines2):
 
                     source_line = source_fid.readline().strip()
                     target_line = target_fid.readline().strip()
-
-                    #if line_n >= 17178:
-                    #    import ipdb;ipdb.set_trace(context=30)
-                    #    print("")
 
                     if len(source_line) and len(target_line):
                         paralel_fid.write(

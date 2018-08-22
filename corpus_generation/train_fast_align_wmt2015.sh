@@ -25,11 +25,11 @@ for language_pair in en-es;do
     out_fast_align_folder=../DATA/WMT2015/fast_align_models/${language_pair}/
    
     # For fast align models
-    [ -d "$out_temporal_folder" ] && rm -R "$out_temporal_folder"
-    mkdir -p "$out_temporal_folder"    
+    [ -d "${out_temporal_folder}" ] && rm -R "${out_temporal_folder}"
+    mkdir -p "${out_temporal_folder}"    
     
     # Train forward and backward models for fast align
-    echo "Training fast_align"
+    echo "Training fast_align ${language_pair}"
     bash ./tools/train_fast_align.sh \
         ../DATA/WMT2015/task2_${language_pair}_training/train.source \
         ../DATA/WMT2015/task2_${language_pair}_training/train.pe \
