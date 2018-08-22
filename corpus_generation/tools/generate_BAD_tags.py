@@ -1,4 +1,5 @@
 import os
+import codecs
 import argparse
 from collections import defaultdict
 from itertools import chain
@@ -6,20 +7,34 @@ from collections import Counter
 from operator import itemgetter
 import json
 import sys
-# TODO: Proper instaler for the tools
-sys.path.append('..')
-from qe_tools.io import read_file
 
 
 GAP_ERRORS = True
 SOURCE_ERRORS = True
 
 
+def read_file(file_path, alignments=False):
+    with codecs.open(file_path, 'r', "utf-8") as fid:
+        lines = [line.rstrip().split() for line in fid.readlines()]
+    if alignments:
+        alignments = []
+        for sent in lines:
+            alignments.append([
+                tuple([
+                    int(side) if side else None for side in word.split('-')
+                ])
+                for word in sent
+            ])
+        return alignments
+    else:
+        return lines
+
+
 def check_out_of_bounds(tokens, alignments, source=True):
     """
-    Checks if alignment indices our out of bounds to respect to tokens. This can
-    happend as we generated the alignments with tercom but use the original raw
-    files (encoding problems may lead to tokens disspearing)
+    Checks if alignment indices our out of bounds to respect to tokens. This
+    can happend as we generated the alignments with tercom but use the original
+    raw files (encoding problems may lead to tokens disspearing)
     """
     assert len(tokens) == len(alignments), "Number of sentences does not macth"
     for sent_index in range(len(tokens)):
@@ -111,8 +126,10 @@ def read_data(args):
     # Sanity Checks
     # Number of sentences matches
     num_sentences = len(source_tokens)
-    assert len(mt_tokens) == num_sentences, "Number of sentences does not match"
-    assert len(pe_tokens) == num_sentences, "Number of sentences does not match"
+    assert len(mt_tokens) == num_sentences, \
+        "Number of sentences does not match"
+    assert len(pe_tokens) == num_sentences, \
+        "Number of sentences does not match"
     assert len(src_pe_alignments) == num_sentences, \
         "Number of sentences does not match"
     assert len(pe_mt_alignments) == num_sentences, \
