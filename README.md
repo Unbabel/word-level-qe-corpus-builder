@@ -63,6 +63,17 @@ If you are sucesful the following file should be available
 
 ## Generating the first version of the tags 
 
+To train fast align in any new corpus, call directly the script `train_fast_align.sh`
+inside `tools`:
+
+    bash tools/train_fast_align.sh source.txt target.txt temp-dir/ models/src-tgt/
+    
+The files `source.txt` and `target.txt` must be text files with aligned sentences, one
+per line. This script will create the input to fast align in the temporary directory and
+save the trained model in the given models directory.
+
+### WMT 2017 example
+
 This is a simple example using WMT2017. In reality you will need to train fast
 align from a sufficiently big corpus. 
 
@@ -81,6 +92,8 @@ Then train `fast_align` with
 
     cd corpus_generation/
     bash train_fast_align_wmt2017.sh
+
+
 
 Once fast align is trained, call the following to generate the tags
 
