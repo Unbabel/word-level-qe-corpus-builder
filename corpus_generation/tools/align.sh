@@ -33,7 +33,6 @@ fi
 
 # Create work folder
 if [ ! -d "${in_work_folder}" ];then
-    echo "mkdir -p ${in_work_folder}"
     mkdir -p ${in_work_folder}
 fi
 
@@ -41,8 +40,8 @@ fi
 paste -d '\t' \
     ${in_source_sentences} \
     ${in_target_sentences} \
-    | sed 's/\t/ ||| /g' \
-    > ${in_work_folder}/$(basename in_target_sentences).pairs
+    | sed 's/	/ ||| /g' \
+    > ${in_work_folder}/$(basename $in_target_sentences).pairs
 
 # ALIGN
 
@@ -52,7 +51,7 @@ ${path_fast_align}/force_align.py \
     ${in_fast_align_folder}/a.s2t.err \
     ${in_fast_align_folder}/a.t2s.params \
     ${in_fast_align_folder}/a.t2s.err \
-    < ${in_work_folder}/$(basename in_target_sentences).pairs \
+    < ${in_work_folder}/$(basename $in_target_sentences).pairs \
     > ${out_alignments}
 
 echo "Created ${out_alignments}"
