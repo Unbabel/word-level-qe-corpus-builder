@@ -61,16 +61,16 @@ If you are sucesful the following file should be available
 
     ./external_tools/tercom-0.7.25/tercom.7.25.jar
 
-## Generating the first version of the tags 
+## Training Fast Align 
 
 To train fast align in any new corpus, call directly the script `train_fast_align.sh`
 inside `tools`:
 
     bash tools/train_fast_align.sh source.txt target.txt temp-dir/ models/src-tgt/
     
-The files `source.txt` and `target.txt` must be text files with aligned sentences, one
-per line. This script will create the input to fast align in the temporary directory and
-save the trained model in the given models directory.
+The files `source.txt` and `target.txt` must be large text files with aligned sentences, 
+one per line. This script will create the input to fast align in the temporary directory 
+and save the trained model in the given models directory.
 
 ### WMT 2017 example
 
@@ -93,15 +93,15 @@ Then train `fast_align` with
     cd corpus_generation/
     bash train_fast_align_wmt2017.sh
 
+## Generating alignment tags
 
+Once fast align is trained, use the script `get_tags.sh` to generate word alignment tags 
+on the QE data:
 
-Once fast align is trained, call the following to generate the tags
+    bash tools/get_tags.sh text.source text.mt text.pe models/src-tgt temp-dir
+    output-dir normal
 
-    bash get_tags_wmt2017.sh 
-
-Tags are currently stored under e.g.
-
-    DATA/WMT2017/temporal_files/task2_en-de_training/
+The command above will generate alignment files in the `output` directory.
 
 ## Exploring the tags
 

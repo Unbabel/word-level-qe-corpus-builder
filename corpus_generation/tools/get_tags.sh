@@ -13,12 +13,14 @@ in_mt_file=$2
 in_pe_file=$3
 in_fast_align_folder=$4
 out_temporal_folder=$5
-out_src_pe_alignments=$6
-out_src_mt_alignments=$7
-out_edit_alignments=$8
-out_source_tags=$9
-out_target_tags=${10}
-fluency_rule=${11}
+out_folder=$6
+fluency_rule=$7
+
+out_src_pe_alignments=${out_folder}/$(basename $in_source_file)-pe
+out_src_mt_alignments=${out_folder}/$(basename $in_source_file)-mt
+out_edit_alignments=${out_folder}/$(basename $in_pe_file)-mt
+out_source_tags=${out_folder}/source_tags
+out_target_tags=${out_folder}/target_tags
 
 # Cleanup temp
 [ -d "${out_temporal_folder}" ] && rm -R "${out_temporal_folder}"
