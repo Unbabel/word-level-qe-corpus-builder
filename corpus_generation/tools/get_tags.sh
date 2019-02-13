@@ -20,7 +20,7 @@ out_src_pe_alignments=${out_folder}/$(basename $in_source_file)-pe
 out_src_mt_alignments=${out_folder}/$(basename $in_source_file)-mt
 out_edit_alignments=${out_folder}/$(basename $in_pe_file)-mt
 out_source_tags=${out_folder}/source_tags
-out_target_tags=${out_folder}/target_tags
+out_target_tags=${out_folder}/tags
 
 # Cleanup temp
 [ -d "${out_temporal_folder}" ] && rm -R "${out_temporal_folder}"
@@ -50,7 +50,8 @@ bash ./tools/tercom.sh \
     ${in_mt_file} \
     ${in_pe_file} \
     ${out_temporal_folder}/tercom/ \
-    ${out_edit_alignments}
+    ${out_edit_alignments} \
+    false
 
 # Generate OK/BAD tags
 echo "Generating OK/BAD tags"
@@ -63,3 +64,15 @@ python ./tools/generate_BAD_tags.py \
     --out-source-tags ${out_source_tags} \
     --out-target-tags ${out_target_tags} \
     --fluency-rule ${fluency_rule}
+
+# now compute HTER -- for this we allow shifts in tercom
+echo "Generating Tercom alignments for HTER values"
+bash ./tools/tercom.sh \
+    ${in_mt_file} \
+    ${in_pe_file} \
+    ${out_temporal_folder}/tercom/ \
+    ${out_edit_alignments} \
+    true
+
+tail -n +3 ${out_temporal_folder}/tercom/out_tercom_file.ter \
+    | awk '{if ($4 > 1) hter=1; else hter=$4; printf "%.6f\n",hter}' > ${out_folder}/tercom/hter
