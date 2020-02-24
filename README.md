@@ -72,33 +72,18 @@ The files `source.txt` and `target.txt` must be large text files with aligned se
 one per line. This script will create the input to fast align in the temporary directory 
 and save the trained model in the given models directory.
 
-### WMT 2017 example
-
-This is a simple example using WMT2017. In reality you will need to train fast
-align from a sufficiently big corpus. 
-
-Uncompress the WMT2017 data on a `DATA` folder. This should look like
-
-    mkdir DATA
-    DATA/WMT2017/task2_de-en_training
-    DATA/WMT2017/task2_de-en_training-dev
-    DATA/WMT2017/task2_de-en_dev         
-    DATA/WMT2017/task2_en-de_dev  
-    DATA/WMT2017/task2_en-de_training
-    DATA/WMT2017/task2_de-en_test
-    DATA/WMT2017/task2_en-de_test  
-
-Then train `fast_align` with
-
-    cd corpus_generation/
-    bash train_fast_align_wmt2017.sh
-
 ## Generating alignment tags
 
-Once fast align is trained, use the script `get_tags.sh` to generate word alignment tags 
+Before generating alignment tags, make sure to tokenize source, mt and post-edited files. The moses tokenizer is a common choice. Double check to use the correct language option.
+
+    perl /path/to/moses/scripts/tokenizer/tokenize.pl -l (en|de|...) -no-escape < text.source > text.tok.source
+    
+The `-no-escape` option prevents automatic conversion of HTML entities such as `'` to `&apos;`.
+
+Once fast align is trained and inputs tokenized, use the script `get_tags.sh` to generate word alignment tags 
 on the QE data:
 
-    bash tools/get_tags.sh text.source text.mt text.pe models/src-tgt temp-dir
+    bash tools/get_tags.sh text.tok.source text.tok.mt text.tok.pe models/src-tgt temp-dir
     output-dir normal
 
 The command above will generate alignment files in the `output` directory.
