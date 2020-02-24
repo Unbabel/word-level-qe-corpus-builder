@@ -72,18 +72,25 @@ The files `source.txt` and `target.txt` must be large text files with aligned se
 one per line. This script will create the input to fast align in the temporary directory 
 and save the trained model in the given models directory.
 
-## Generating alignment tags
+## Preprocessing
 
-Before generating alignment tags, make sure to tokenize source, mt and post-edited files. The moses tokenizer is a common choice. Double check to use the correct language option.
+Before generating alignment tags, make sure to tokenize and truecase source, mt and post-edited files. The moses tokenizer is a common choice. Double check to use the correct language option.
 
     perl /path/to/moses/scripts/tokenizer/tokenize.pl -l (en|de|...) -no-escape < text.source > text.tok.source
     
 The `-no-escape` option prevents automatic conversion of HTML entities such as `'` to `&apos;`.
 
+Then, truecasing. This needs to have a truecaser model; a new one can be trained with `train-truecaser.perl` under moses.
+
+    perl /path/to/moses/scripts/recaser/truecase.perl --model truecaser.model < text.tok.source > text.tok.tc.src
+
+
+## Generating alignment tags
+
 Once fast align is trained and inputs tokenized, use the script `get_tags.sh` to generate word alignment tags 
 on the QE data:
 
-    bash tools/get_tags.sh text.tok.source text.tok.mt text.tok.pe models/src-tgt temp-dir
+    bash tools/get_tags.sh text.tok.tc.src text.tok.tc.mt text.tok.tc.pe models/src-tgt temp-dir
     output-dir normal
 
 The command above will generate alignment files in the `output` directory.
