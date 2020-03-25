@@ -35,7 +35,7 @@ Ubuntu friendly commands are provided to instal these. With the needed
 libraries just do
 
     mkdir build
-    build
+    cd build
     cmake ..
     make
 
