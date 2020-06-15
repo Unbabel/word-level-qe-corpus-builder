@@ -35,7 +35,7 @@ Ubuntu friendly commands are provided to instal these. With the needed
 libraries just do
 
     mkdir build
-    build
+    cd build
     cmake ..
     make
 
@@ -61,34 +61,39 @@ If you are sucesful the following file should be available
 
     ./external_tools/tercom-0.7.25/tercom.7.25.jar
 
-## Generating the first version of the tags 
+## Training Fast Align 
 
-This is a simple example using WMT2017. In reality you will need to train fast
-align from a sufficiently big corpus. 
+To train fast align in any new corpus, call directly the script `train_fast_align.sh`
+inside `tools`:
 
-Uncompress the WMT2017 data on a `DATA` folder. This should look like
+    bash tools/train_fast_align.sh source.txt target.txt temp-dir/ models/src-tgt/
+    
+The files `source.txt` and `target.txt` must be large text files with aligned sentences, 
+one per line. This script will create the input to fast align in the temporary directory 
+and save the trained model in the given models directory.
 
-    mkdir DATA
-    DATA/WMT2017/task2_de-en_training
-    DATA/WMT2017/task2_de-en_training-dev
-    DATA/WMT2017/task2_de-en_dev         
-    DATA/WMT2017/task2_en-de_dev  
-    DATA/WMT2017/task2_en-de_training
-    DATA/WMT2017/task2_de-en_test
-    DATA/WMT2017/task2_en-de_test  
+## Preprocessing
 
-Then train `fast_align` with
+Before generating alignment tags, make sure to tokenize and truecase source, mt and post-edited files. The moses tokenizer is a common choice. Double check to use the correct language option.
 
-    cd corpus_generation/
-    bash train_fast_align_wmt2017.sh
+    perl /path/to/moses/scripts/tokenizer/tokenize.pl -l (en|de|...) -no-escape < text.source > text.tok.source
+    
+The `-no-escape` option prevents automatic conversion of HTML entities such as `'` to `&apos;`.
 
-Once fast align is trained, call the following to generate the tags
+Then, truecasing. This needs to have a truecaser model; a new one can be trained with `train-truecaser.perl` under moses.
 
-    bash get_tags_wmt2017.sh 
+    perl /path/to/moses/scripts/recaser/truecase.perl --model truecaser.model < text.tok.source > text.tok.tc.src
 
-Tags are currently stored under e.g.
 
-    DATA/WMT2017/temporal_files/task2_en-de_training/
+## Generating alignment tags
+
+Once fast align is trained and inputs tokenized, use the script `get_tags.sh` to generate word alignment tags 
+on the QE data:
+
+    bash tools/get_tags.sh text.tok.tc.src text.tok.tc.mt text.tok.tc.pe models/src-tgt temp-dir
+    output-dir normal
+
+The command above will generate alignment files in the `output` directory.
 
 ## Exploring the tags
 
