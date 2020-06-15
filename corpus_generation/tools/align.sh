@@ -1,4 +1,7 @@
 #!/bin/bash
+
+# Usage: bash align.sh text.src text.mt fast_align_folder temp_folder output.src-mt
+
 # Flags
 set -o errexit
 set -o nounset
