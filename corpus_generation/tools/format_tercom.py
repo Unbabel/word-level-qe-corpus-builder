@@ -18,6 +18,6 @@ with codecs.open(out_file, 'w', "utf-8") as fid:
     for index, line in enumerate(lines):
         # Note that HTML compatible scaping is needed
         line = escape(line)
-        # We also need to scape double quotes
+        # We also need to escape double quotes
         line = line.replace('"','\\"')
         fid.write("%s\t(%.12d)\n" % (line, index))

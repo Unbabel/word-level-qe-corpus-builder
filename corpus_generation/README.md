@@ -25,7 +25,7 @@ post edited text. From the alignments, insertions and substitutions on MT are
 marked as BAD tags over the words. Deletions are marked as BAD tags over the
 gaps. 
 
-Using alignments between MT and PE (tercom) and source PE (fast_align), target
+Using alignments between MT and PE (tercom) and source PE (SimAlign), target
 side BAD tags are propagated back to the source to signal words that are
 related to the error. Three version were considered in this freest version of
 the corpus. These can be selected inside of the `get_tags*` scripts using the
@@ -35,10 +35,6 @@ variable `$fluency_rule`.
 - `ignore-shift-set` if a BAD token appears also in PE do not propagate to source
 - `missing-only` only propagate for missing words (deletions)
 
-Default used was `normal`.
+Default setting used was `normal`.
 
-## Generating Corpora
 
-The new tags can be generated from any previous WMT word-level QE corpus. As
-examples we provide scripts for WMT2015 and WMT2017. See 
-`word-level-qe-corpus-builder/README.md`.

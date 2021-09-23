@@ -164,21 +164,21 @@ if __name__ == "__main__":
     jj = args['j']
     if jj is None:
         jj = 1
-    print "fine grained?", fine_grained
-    print "keep inserts?", keep_inserts
+    print("fine grained?", fine_grained)
+    print("keep inserts?", keep_inserts)
     if fine_grained:
         tags_map = {'C': 'OK', 'S': 'BAD_SUB', 'I': 'BAD_INS', 'D': 'BAD_DEL'}
     else:
         tags_map = {'C': 'OK', 'S': 'BAD', 'I': 'BAD', 'D': 'BAD'}
     hyps, refs, hyps_edits, hters = parse_file(filepath)
 
-    print "analysis for up to k=%d" % k
+    print("analysis for up to k=%d" % k)
 
     j_freq = {}
     j_dist_freq = {}
     num_examples = 1
     for j in xrange(1,k+1):
-        print "j=%d" % jj
+        print("j=%d" % jj)
         k_seq = j*["BAD_SUB"]
         j_seq = jj*["BAD_INS"]
         seq = ["OK"]+j_seq+k_seq+["OK"]
@@ -204,19 +204,19 @@ if __name__ == "__main__":
                 matches_sum += len(matches)
                 matches_sents_sum +=1
                 if mc < num_examples: #only print this many examples
-                    print "\n\t%d" % i
+                    print("\n\t%d" % i)
                     hyp_marked = mark_matches(hyp, seq, matches, sep_start, sep_end) 
                     ref_marked = mark_matches(ref, seq, matches, sep_start, sep_end)
                     tags_marked = mark_matches(tags, seq, matches, sep_start, sep_end)   
-                    print "\t", " ".join(hyp_marked)
-                    print "\t", " ".join(ref_marked)
-                    print "\t", " ".join(tags_marked)
+                    print("\t", " ".join(hyp_marked))
+                    print("\t", " ".join(ref_marked))
+                    print("\t", " ".join(tags_marked))
                     mc+=1
             i+=1
-        print "%d cases of pattern for k=%d, j=%d matches in %d distinct sentences %s" % (matches_sum, j, jj, matches_sents_sum, str(seq))
+        print("%d cases of pattern for k=%d, j=%d matches in %d distinct sentences %s" % (matches_sum, j, jj, matches_sents_sum, str(seq)))
         j_freq[j] = matches_sum
         j_dist_freq[j] = matches_sents_sum
 
-        print "modified words: %d" % (j+jj)
-    print dict2table(j_freq, j_dist_freq)
+        print("modified words: %d" % (j+jj))
+    print(dict2table(j_freq, j_dist_freq))
 

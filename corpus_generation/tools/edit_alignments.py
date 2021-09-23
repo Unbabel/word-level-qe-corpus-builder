@@ -33,8 +33,9 @@ for index in range(nr_sentences):
         "Lengths do  not match"
 
 edit_alignments = []
-for sent_index, sent_edits in enumerate(edits):
 
+for sent_index, sent_edits in enumerate(edits):
+    
     pe_original_index = 0
     mt_original_index = 0
     edit_alignments_sent = []
@@ -86,5 +87,7 @@ for sent_index, sent_edits in enumerate(edits):
     edit_alignments.append(edit_alignments_sent)
 
 with codecs.open(out_align, 'w', 'utf-8') as fid:
+    print("writing to " + str(out_align))
     for sent_edits in edit_alignments:
         fid.write("%s\n" % (" ".join(sent_edits)))
+ 

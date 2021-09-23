@@ -80,9 +80,10 @@ if [ "$use_shift" != "true" ]; then
 	
     # Reformat
     echo "Reading XML"
-    python ./tools/edit_alignments.py \
+    python3 ./tools/edit_alignments.py \
 	   ${in_work_folder}/$(basename out_tercom_file).xml \
 	   ${in_hypothesis_file} \
 	   ${in_reference_file}  \
 	   ${out_tercom_alignments_file}
+
 fi
