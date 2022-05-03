@@ -4,9 +4,6 @@ import subprocess
 import sys
 import argparse
 
-#truecase_script = "/home/chryssa/QE-ST/qe-corpus-builder/external_tools/mosesdecoder/scripts/recaser/truecase.perl"
-#truecase_model = "truecase.all."+lang+".ms.model"
-#os.system("perl "+ truecase_script + " --model "+truecase_model+ "  < " + file_prefix + ".reord.tok.src > "+ file_prefix + ".reord.tok.tc.src"
 
 
 def truecase(truecase_script, truecase_model, infile):
@@ -33,7 +30,7 @@ def parse_args():
     return parser.parse_args()
 
 def main(args):
-    truecase_script = "/home/chryssa/QE-ST/qe-corpus-builder/external_tools/mosesdecoder/scripts/recaser/truecase.perl"
+    truecase_script = "../external_tools/mosesdecoder/scripts/recaser/truecase.perl"
     
     truecase(truecase_script, args.model, args.infile)
 

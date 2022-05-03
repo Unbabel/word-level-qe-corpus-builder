@@ -1,9 +1,17 @@
 import os
-from tqdm import tqdm
+from tqdm.notebook import tqdm
 import jieba
 import janome.tokenizer 
 import re
 import subprocess 
+import fugashi
+import JapaneseTokenizer 
+import Mykytea
+from konoha import WordTokenizer
+import fileinput
+import sys
+import indicnlp
+
 
 def parse_file2lines(filename):
     lines=[]
@@ -13,6 +21,7 @@ def parse_file2lines(filename):
     return lines
 
 def janome_tokenize(infile, outfile):
+    print('Using Janome tokenizer')
     tokenizer = janome.tokenizer.Tokenizer()
     lines = parse_file2lines(infile)
     wf = open(outfile,'w')
@@ -24,7 +33,7 @@ def janome_tokenize(infile, outfile):
     wf.close()
 
 def jieba_tokenize(infile, outfile):
-  
+    print('Using jieba tokenizer')
     lines = parse_file2lines(infile)
     wf = open(outfile,'w')
     for line in lines:
@@ -35,16 +44,69 @@ def jieba_tokenize(infile, outfile):
     wf.close()
 
 def moses_tokenize(lang, infile, outfile):    
-    tokeniser_script = "/home/chryssa/QE-ST/qe-corpus-builder/external_tools/mosesdecoder/scripts/tokenizer/tokenizer.perl"
-    #os.system("perl " + tokeniser_script + " -l "+lang+" -no-escape < " + infile + " > " + outfile)
-
+    print('Using Moses tokenizer')
+    tokeniser_script = "../external_tools/mosesdecoder/scripts/tokenizer/tokenizer.perl"
     perl_params = [tokeniser_script, '-l',lang, '-no-escape']
-    #perl_script = subprocess.Popen(perl_params, stdin=infile, stdout=outfile)
-    #perl_script.communicate()
-
     with open(outfile, 'wb', 0) as fileout:
         with open(infile, 'r') as filein:
             subprocess.call(perl_params, stdin=filein, stdout=fileout)
+
+def fugashi_tokenize(infile,outfile):
+    print('Using FUGASHI tokenizer')
+    tokenizer = fugashi.Tagger()
+    lines = parse_file2lines(infile)
+    wf = open(outfile,'w')
+    for line in lines:
+        tokens = [word.surface for word in tokenizer(line.strip())]
+        out = ' '.join(tokens)
+        out = re.sub('\s+', ' ', out)
+        wf.write(out+'\n')
+    wf.close()
+
+def kytea_tokenize(infile, outfile  ):
+    print('Using kytea tokenizer')
+    tokenizer = WordTokenizer('MeCab')
+    lines = parse_file2lines(infile)
+    wf = open(outfile,'w')
+    for line in lines:
+        tokens = tokenizer.tokenize(line.strip())
+        out = ' '.join(tokens)
+        out = re.sub('\s+', ' ', out)
+        wf.write(out+'\n')
+    wf.close()
+
+
+def flores_tokenize(language, infile, outfile):
+    print('Using flores tokenizer')
+    indic_nlp_path='../external_tools/indic_nlp_resources'
+    try:
+        sys.path.extend([
+            indic_nlp_path,
+            os.path.join(indic_nlp_path, "src"),
+        ])
+        from indicnlp.tokenize import indic_tokenize
+        from indicnlp.normalize.indic_normalize import IndicNormalizerFactory
+    except:
+        raise Exception(
+            "Cannot load Indic NLP Library, make sure --indic-nlp-path is correct"
+        )
+    # create normalizer
+    factory = IndicNormalizerFactory()
+    normalizer = factory.get_normalizer(
+        language, remove_nuktas=False,
+    )
+    factory = IndicNormalizerFactory()
+    normalizer = factory.get_normalizer(
+        language, remove_nuktas=False,
+    )
+    lines = parse_file2lines(infile)
+    wf = open(outfile, 'w')
+    # normalize and tokenize
+    for line in lines:
+        line = normalizer.normalize(line)
+        line = " ".join(indic_tokenize.trivial_tokenize(line, language))
+        wf.write(line.strip() + '\n')
+    wf.close()
 
 
 def tokenize(lang, infile):
@@ -52,7 +114,9 @@ def tokenize(lang, infile):
     if lang=='zh':
         jieba_tokenize(infile, outfile)
     elif lang=='ja':
-        janome_tokenize(infile, outfile)
+        fugashi_tokenize(infile, outfile)
+    elif lang=='ne'or lang=='si' or lang=='ma':
+        flores_tokenize(lang, infile, outfile)
     else:
         moses_tokenize(lang, infile, outfile)
     return outfile
