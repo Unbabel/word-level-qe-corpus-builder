@@ -158,9 +158,11 @@ def read_data(args):
         source_tokens, mt_tokens, pe_tokens, pe2source, pe_mt_alignments
     )
 
-
 def get_quality_tags(source_tokens, mt_tokens, pe_tokens, pe_mt_alignments, pe2source,
-                     fluency_rule=None):
+                     fluency_rule=None, gaps=True):
+    
+    if not gaps:
+        GAP_ERRORS = False
 
     # Word + Gap Tags
     target_tags = []
@@ -321,12 +323,20 @@ def get_quality_tags(source_tokens, mt_tokens, pe_tokens, pe_mt_alignments, pe2s
     print(len(mt_tokens[1]))
     print(len(target_tags[1]))
     # Basic sanity checks
-    assert all(
-        [len(aa)*2 + 1 == len(bb) for aa, bb in zip(mt_tokens, target_tags)]
-    ), "tag creation failed"
-    assert all(
-        [len(aa) == len(bb) for aa, bb in zip(source_tokens, source_tags)]
-    ), "tag creation failed"
+    if GAP_ERRORS:
+        assert all(
+            [len(aa)*2 + 1 == len(bb) for aa, bb in zip(mt_tokens, target_tags)]
+        ), "tag creation failed"
+        assert all(
+            [len(aa) == len(bb) for aa, bb in zip(source_tokens, source_tags)]
+        ), "tag creation failed"
+    else:
+        assert all(
+            [len(aa) == len(bb) for aa, bb in zip(mt_tokens, target_tags)]
+        ), "tag creation failed"
+        assert all(
+            [len(aa) == len(bb) for aa, bb in zip(source_tokens, source_tags)]
+        ), "tag creation failed"
 
     return source_tags, target_tags, error_detail
 
@@ -344,7 +354,7 @@ def write_error_detail(output_file, error_detail):
             fid.write("%s\n" % json.dumps(error_sent))
 
 
-def generate_bad_ok_tags(fsrc_tokens, fmt_tokens, fpe_tokens, fpe_mt_alignments, fpe2source, fluency_rule, out_source_tags, out_target_tags):
+def generate_bad_ok_tags(fsrc_tokens, fmt_tokens, fpe_tokens, fpe_mt_alignments, fpe2source, fluency_rule, out_source_tags, out_target_tags, gaps):
    # GET TAGS FOR SOURCE AND TARGET
     sargs= {}
     sargs['src_tokens']=fsrc_tokens
@@ -353,6 +363,7 @@ def generate_bad_ok_tags(fsrc_tokens, fmt_tokens, fpe_tokens, fpe_mt_alignments,
     sargs['pe_mt_alignments']=fpe_mt_alignments
     sargs['pe2source']=fpe2source
     sargs['fluency_rule']=fluency_rule
+    sargs['gaps']=gaps
 
     (
         source_tokens,
@@ -369,7 +380,8 @@ def generate_bad_ok_tags(fsrc_tokens, fmt_tokens, fpe_tokens, fpe_mt_alignments,
         pe_tokens,
         pe_mt_alignments,
         pe2source,
-        fluency_rule=fluency_rule
+        fluency_rule=fluency_rule,
+        gaps=gaps
     )
 
     # Store a more details summary of errors

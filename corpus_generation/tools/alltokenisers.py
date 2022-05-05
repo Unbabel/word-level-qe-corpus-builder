@@ -5,9 +5,6 @@ import janome.tokenizer
 import re
 import subprocess 
 import fugashi
-import JapaneseTokenizer 
-import Mykytea
-from konoha import WordTokenizer
 import fileinput
 import sys
 import indicnlp
@@ -62,19 +59,6 @@ def fugashi_tokenize(infile,outfile):
         out = re.sub('\s+', ' ', out)
         wf.write(out+'\n')
     wf.close()
-
-def kytea_tokenize(infile, outfile  ):
-    print('Using kytea tokenizer')
-    tokenizer = WordTokenizer('MeCab')
-    lines = parse_file2lines(infile)
-    wf = open(outfile,'w')
-    for line in lines:
-        tokens = tokenizer.tokenize(line.strip())
-        out = ' '.join(tokens)
-        out = re.sub('\s+', ' ', out)
-        wf.write(out+'\n')
-    wf.close()
-
 
 def flores_tokenize(language, infile, outfile):
     print('Using flores tokenizer')
