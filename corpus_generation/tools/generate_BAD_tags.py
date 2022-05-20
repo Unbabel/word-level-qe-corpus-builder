@@ -7,10 +7,12 @@ from collections import Counter
 from operator import itemgetter
 import json
 import sys
+from xmlrpc.client import boolean
 
 
 GAP_ERRORS = True
 SOURCE_ERRORS = True
+
 
 
 def read_file(file_path, alignments=False):
@@ -115,6 +117,20 @@ def parse_arguments(sys_argv):
         choices=['ignore-shift-set', 'normal', 'missing-only'],
         type=str
     )
+    
+    parser.add_argument(
+        '--gaps',
+        help='Indicate use of gap tags',
+        #choices=['ignore-shift-set', 'normal', 'missing-only'],
+        type=boolean
+    )
+    
+    parser.add_argument(
+        '--delete',
+        help='Rules used to determine deletion annotation conventions',
+        choices=['none', 'right', 'left'],
+        type=str
+    )
     args = parser.parse_args(sys_argv)
 
     return args
@@ -159,10 +175,13 @@ def read_data(args):
     )
 
 def get_quality_tags(source_tokens, mt_tokens, pe_tokens, pe_mt_alignments, pe2source,
-                     fluency_rule=None, gaps=True):
+                     fluency_rule=None, gaps=True, ommissions='right'):
     
     if not gaps:
         GAP_ERRORS = False
+    else:
+        GAP_ERRORS = True
+        ommissions='none'
 
     # Word + Gap Tags
     target_tags = []
@@ -184,8 +203,10 @@ def get_quality_tags(source_tokens, mt_tokens, pe_tokens, pe_mt_alignments, pe2s
             if mt_idx is None:
 
                 # Deleted word error (need to store for later)
-                sent_deletion_indices.append(mt_position-1)
-
+                if ommissions=='left' or ommissions=='none':
+                    sent_deletion_indices.append(mt_position-1)
+                else:
+                    sent_deletion_indices.append(mt_position)
                 if fluency_rule == 'normal' or fluency_rule == "missing-only":
 
                     source_positions = pe2source[sentence_index][pe_idx]
@@ -211,12 +232,21 @@ def get_quality_tags(source_tokens, mt_tokens, pe_tokens, pe_mt_alignments, pe2s
                     raise Exception("Uknown rule %s" % fluency_rule)
 
                 # Store error detail
-                error_detail_sent.append({
-                    'type': error_type,
-                    'gap_position': mt_position-1,
-                    'target_position': mt_idx,
-                    'source_positions': source_positions,
-                })
+                if ommissions=='left' or ommissions=='none':
+                    error_detail_sent.append({
+                        'type': error_type,
+                        'gap_position': mt_position-1,
+                        'target_position': mt_idx,
+                        'source_positions': source_positions,
+                    })
+                else:
+                    error_detail_sent.append({
+                        'type': error_type,
+                        'gap_position': mt_position,
+                        'target_position': mt_idx,
+                        'source_positions': source_positions,
+                    })
+                    
 
             elif pe_idx is None:
 
@@ -307,7 +337,31 @@ def get_quality_tags(source_tokens, mt_tokens, pe_tokens, pe_mt_alignments, pe2s
                     word_and_gaps_tags.extend([tag, 'OK'])
             target_tags.append(word_and_gaps_tags)
         else:
-            target_tags.append(sent_tags)
+            if ommissions=='none':
+                target_tags.append(sent_tags)
+            elif ommissions=='right':
+                for index,tag in enumerate(sent_tags):
+                    if index in sent_deletion_indices:
+                        target_tags.append['BAD']
+                    else:
+                        target_tags.append(tag)
+                if len(sent_tags) in sent_deletion_indices:
+                    target_tags.append['BAD']
+                else:
+                    target_tags.append['OK']
+            elif ommissions == 'left':
+                if -1 in sent_deletion_indices:
+                    target_tags.append('BAD')
+                else:
+                    target_tags.append('OK')
+                for index,tag in enumerate(sent_tags):
+                    if index in sent_deletion_indices:
+                        target_tags.append['BAD']
+                    else:
+                        target_tags.append(tag)
+            
+
+        
 
         # Convert BAD source indices into indices
         source_sentence_bad_tags = \
@@ -318,25 +372,32 @@ def get_quality_tags(source_tokens, mt_tokens, pe_tokens, pe_mt_alignments, pe2s
 
         #
         error_detail.append(error_detail_sent)
-    print(mt_tokens[1])
-    print(target_tags[1])
-    print(len(mt_tokens[1]))
-    print(len(target_tags[1]))
+        
+   
+    
     # Basic sanity checks
     if GAP_ERRORS:
         assert all(
             [len(aa)*2 + 1 == len(bb) for aa, bb in zip(mt_tokens, target_tags)]
-        ), "tag creation failed"
+        ), "target tag creation failed"
         assert all(
             [len(aa) == len(bb) for aa, bb in zip(source_tokens, source_tags)]
-        ), "tag creation failed"
+        ), "source tag creation failed"
     else:
-        assert all(
-            [len(aa) == len(bb) for aa, bb in zip(mt_tokens, target_tags)]
-        ), "tag creation failed"
-        assert all(
-            [len(aa) == len(bb) for aa, bb in zip(source_tokens, source_tags)]
-        ), "tag creation failed"
+        if ommissions=='none':
+            assert all(
+                [len(aa) == len(bb) for aa, bb in zip(mt_tokens, target_tags)]
+            ), "target tag creation failed"
+            assert all(
+                [len(aa) == len(bb) for aa, bb in zip(source_tokens, source_tags)]
+            ), "source tag creation failed"
+        else:
+            assert all(
+                [len(aa)+1 == len(bb) for aa, bb in zip(mt_tokens, target_tags)]
+            ), "target tag creation failed"
+            assert all(
+                [len(aa) == len(bb) for aa, bb in zip(source_tokens, source_tags)]
+            ), "source tag creation failed"
 
     return source_tags, target_tags, error_detail
 
@@ -354,7 +415,7 @@ def write_error_detail(output_file, error_detail):
             fid.write("%s\n" % json.dumps(error_sent))
 
 
-def generate_bad_ok_tags(fsrc_tokens, fmt_tokens, fpe_tokens, fpe_mt_alignments, fpe2source, fluency_rule, out_source_tags, out_target_tags, gaps):
+def generate_bad_ok_tags(fsrc_tokens, fmt_tokens, fpe_tokens, fpe_mt_alignments, fpe2source, fluency_rule, out_source_tags, out_target_tags, gaps, delete):
    # GET TAGS FOR SOURCE AND TARGET
     sargs= {}
     sargs['src_tokens']=fsrc_tokens
@@ -364,6 +425,7 @@ def generate_bad_ok_tags(fsrc_tokens, fmt_tokens, fpe_tokens, fpe_mt_alignments,
     sargs['pe2source']=fpe2source
     sargs['fluency_rule']=fluency_rule
     sargs['gaps']=gaps
+    sargs['delete']=delete
 
     (
         source_tokens,
@@ -381,7 +443,8 @@ def generate_bad_ok_tags(fsrc_tokens, fmt_tokens, fpe_tokens, fpe_mt_alignments,
         pe_mt_alignments,
         pe2source,
         fluency_rule=fluency_rule,
-        gaps=gaps
+        gaps=gaps,
+        ommissions = delete
     )
 
     # Store a more details summary of errors

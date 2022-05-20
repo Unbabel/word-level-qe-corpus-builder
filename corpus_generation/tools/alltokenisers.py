@@ -95,11 +95,12 @@ def flores_tokenize(language, infile, outfile):
 
 def tokenize(lang, infile):
     outfile = infile.rsplit('.')[0]+'.tok.'+infile.rsplit('.')[1]
+    print("tokenizing file "+infile+" for lang "+lang)
     if lang=='zh':
         jieba_tokenize(infile, outfile)
     elif lang=='ja':
         fugashi_tokenize(infile, outfile)
-    elif lang=='ne'or lang=='si' or lang=='ma':
+    elif lang=='ne'or lang=='si' or lang=='ma' or lang=='mr':
         flores_tokenize(lang, infile, outfile)
     else:
         moses_tokenize(lang, infile, outfile)
