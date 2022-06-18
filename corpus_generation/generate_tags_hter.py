@@ -6,7 +6,6 @@ import argparse
 
 sys.path.insert(0, 'tools')
 
-from tools.alltokenisers import tokenize
 from tools.preprocess import truecase
 from tools.aligners import align_simaligner as align
 from tools.generate_BAD_tags import generate_bad_ok_tags
@@ -42,6 +41,7 @@ def main(args):
     path = os.path.dirname(os.path.abspath(src))
     
     if args.token:
+        from tools.alltokenisers import tokenize
         tok_src = tokenize(args.src_lang, src)
         tok_mt = tokenize(args.tgt_lang, mt)
         tok_pe = tokenize(args.tgt_lang, pe)
@@ -82,10 +82,7 @@ def main(args):
     hter = src.rsplit('.')[0]+'.hter'
     print("ALIGNED MT PE")
 
-    if args.gaps:
-        generate_bad_ok_tags(tok_tc_src, tok_tc_mt, tok_tc_pe, mt_pe_align, src_pe_align, 'normal', src_tags, tgt_tags)
-    else:
-        generate_bad_ok_tags(tok_tc_src, tok_tc_mt, tok_tc_pe, mt_pe_align, src_pe_align, 'normal', src_tags, tgt_tags, False, args.delete)
+    generate_bad_ok_tags(tok_tc_src, tok_tc_mt, tok_tc_pe, mt_pe_align, src_pe_align, 'normal', src_tags, tgt_tags, args.gaps, args.delete)
     params = ["bash ./tools/tercom.sh " +  tok_tc_mt+ " " + tok_tc_pe + " " + tercom + " "+ mt_pe_align + " true"]
     p2 = subprocess.Popen(params, shell=True)
     p2.wait() 
