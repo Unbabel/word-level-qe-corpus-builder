@@ -8,7 +8,7 @@ import fugashi
 import fileinput
 import sys
 import indicnlp
-
+from sacremoses import MosesTokenizer, MosesDetokenizer
 
 def parse_file2lines(filename):
     lines=[]
@@ -34,7 +34,7 @@ def jieba_tokenize(infile, outfile):
     lines = parse_file2lines(infile)
     wf = open(outfile,'w')
     for line in lines:
-        tokens = [tok.surface for tok in jieba.tokenize(line.strip())]
+        tokens = [tok[0] for tok in jieba.tokenize(line.strip())]
         out = ' '.join(tokens)
         out = re.sub('\s+', ' ', out)
         wf.write(out+'\n')
@@ -105,3 +105,13 @@ def tokenize(lang, infile):
     else:
         moses_tokenize(lang, infile, outfile)
     return outfile
+
+def moses_tokenize_sent(sent,lang):
+    mt = MosesTokenizer(lang=lang)
+    tokenized_text = mt.tokenize(sent)
+    return tokenized_text
+
+
+def tokenize_sent(sent, lang):
+    moses_tokenize_sent(sent, lang)
+    

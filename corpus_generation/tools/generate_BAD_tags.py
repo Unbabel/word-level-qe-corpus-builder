@@ -199,16 +199,13 @@ def get_quality_tags(source_tokens, mt_tokens, pe_tokens, pe_mt_alignments, pe2s
         # Loop over alignments. This has the length of the edit-distance aligned
         # sequences.
         for pe_idx, mt_idx in pe_mt_alignments[sentence_index]:
-
             if mt_idx is None:
-
                 # Deleted word error (need to store for later)
                 if ommissions=='left' or ommissions=='none':
                     sent_deletion_indices.append(mt_position-1)
                 else:
                     sent_deletion_indices.append(mt_position)
                 if fluency_rule == 'normal' or fluency_rule == "missing-only":
-
                     source_positions = pe2source[sentence_index][pe_idx]
                     source_sentence_bad_indices |= set(source_positions)
                     error_type = 'deletion'
@@ -320,9 +317,8 @@ def get_quality_tags(source_tokens, mt_tokens, pe_tokens, pe_mt_alignments, pe2s
                 mt_position += 1
 
         # Insert deletion errors as gaps
+        word_and_gaps_tags = []
         if GAP_ERRORS:
-            word_and_gaps_tags = []
-
             # Add starting OK/BAD
             if -1 in sent_deletion_indices:
                 word_and_gaps_tags.append('BAD')
@@ -342,23 +338,24 @@ def get_quality_tags(source_tokens, mt_tokens, pe_tokens, pe_mt_alignments, pe2s
             elif ommissions=='right':
                 for index,tag in enumerate(sent_tags):
                     if index in sent_deletion_indices:
-                        target_tags.append['BAD']
+                        word_and_gaps_tags.append('BAD')
                     else:
-                        target_tags.append(tag)
+                        word_and_gaps_tags.append(tag)
                 if len(sent_tags) in sent_deletion_indices:
-                    target_tags.append['BAD']
+                    word_and_gaps_tags.append('BAD')
                 else:
-                    target_tags.append['OK']
+                    word_and_gaps_tags.append('OK')
             elif ommissions == 'left':
                 if -1 in sent_deletion_indices:
-                    target_tags.append('BAD')
+                    word_and_gaps_tags.append('BAD')
                 else:
-                    target_tags.append('OK')
+                    word_and_gaps_tags.append('OK')
                 for index,tag in enumerate(sent_tags):
                     if index in sent_deletion_indices:
-                        target_tags.append['BAD']
+                        word_and_gaps_tags.append('BAD')
                     else:
-                        target_tags.append(tag)
+                        word_and_gaps_tags.append(tag)
+            target_tags.append(word_and_gaps_tags)
             
 
         
@@ -392,6 +389,8 @@ def get_quality_tags(source_tokens, mt_tokens, pe_tokens, pe_mt_alignments, pe2s
                 [len(aa) == len(bb) for aa, bb in zip(source_tokens, source_tags)]
             ), "source tag creation failed"
         else:
+            print(len(mt_tokens[0]))
+            print(len(target_tags[0]))
             assert all(
                 [len(aa)+1 == len(bb) for aa, bb in zip(mt_tokens, target_tags)]
             ), "target tag creation failed"

@@ -25,10 +25,12 @@ def parse_args():
     parser.add_argument('--truecase', dest='truecase', action='store_true')
     parser.add_argument('--gaps', dest='gaps', action='store_true')
     parser.add_argument('--delete', type=str, default = 'none')
+    parser.add_argument('--align',  dest='align', action='store_true')
     
-    parser.set_defaults(token=True)
+    parser.set_defaults(token=False)
     parser.set_defaults(truecase=False)
     parser.set_defaults(gaps=False)
+    parser.set_defaults(align=True)
     
     return parser.parse_args()
 
@@ -38,6 +40,7 @@ def main(args):
     mt = args.mt   
     pe = args.pe  
     path = os.path.dirname(os.path.abspath(src))
+    
     if args.token:
         tok_src = tokenize(args.src_lang, src)
         tok_mt = tokenize(args.tgt_lang, mt)
@@ -57,15 +60,16 @@ def main(args):
         tok_tc_mt = tok_mt
         tok_tc_pe = tok_pe
     
+    
     src_mt_align = src.rsplit('.')[0]+'.src-mt.alignments'
     src_pe_align = src.rsplit('.')[0]+'.src-pe.alignments'
     mt_pe_align = src.rsplit('.')[0]+'.mt-pe.alignments'
 
+    if args.align:
+        align(tok_src, tok_mt, src_mt_align, [args.src_lang, args.tgt_lang])
+        align(tok_src, tok_pe, src_pe_align, [args.src_lang, args.tgt_lang])
 
-    align(tok_src, tok_mt, src_mt_align, [args.src_lang, args.tgt_lang])
-    align(tok_src, tok_pe, src_pe_align, [args.src_lang, args.tgt_lang])
-
-    
+        
     tercom = "temp/tercom/"
     
     params = ["bash ./tools/tercom.sh  " + tok_tc_mt + " " + tok_tc_pe +"  "+ tercom + "  " + mt_pe_align + "  false"]
