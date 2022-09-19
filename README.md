@@ -29,7 +29,7 @@ Before generating alignment tags, it is necessary to tokenize and truecase sourc
 | German    |  de  | moses      |
 | Japanese  |  ja  | fugashi    |
 | Khmer     |  km  | nltk-khmer |
-| Marathi.  |  mr  | indic_nlp  |
+| Marathi   |  mr  | indic_nlp  |
 | Nepalese  |  ne  | indic_nlp  |
 | Pashto    |  ps  | moses      |
 | Romanian  |  ro  | moses      |
