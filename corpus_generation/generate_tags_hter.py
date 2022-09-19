@@ -29,7 +29,7 @@ def parse_args():
     parser.set_defaults(token=False)
     parser.set_defaults(truecase=False)
     parser.set_defaults(gaps=False)
-    parser.set_defaults(align=True)
+    parser.set_defaults(align=False)
     
     return parser.parse_args()
 
