@@ -22,6 +22,14 @@ in_hypothesis_file=$1
 in_reference_file=$2
 in_work_folder=$3
 out_tercom_alignments_file=$4
+use_shift=$5
+
+if [ "$use_shift" = "true" ]; then
+    d_flag=""
+else
+    d_flag="-d 0"
+fi
+
 
 # Get basenames
 reference_basename=$(basename in_reference_file)
@@ -65,12 +73,17 @@ java \
     -r ${in_work_folder}/${reference_basename} \
     -h ${in_work_folder}/${hypothesis_basename} \
     -n ${in_work_folder}/$(basename out_tercom_file) \
-    -d 0 > ${in_work_folder}/tercom.log
+    ${d_flag}
+    > ${in_work_folder}/tercom.log
 
-# Reformat
-echo "Reading XML"
-python ./tools/edit_alignments.py \
-    ${in_work_folder}/$(basename out_tercom_file).xml \
-    ${in_hypothesis_file} \
-    ${in_reference_file}  \
-    ${out_tercom_alignments_file}
+if [ "$use_shift" != "true" ]; then
+	
+    # Reformat
+    echo "Reading XML"
+    python3 ./tools/edit_alignments.py \
+	   ${in_work_folder}/$(basename out_tercom_file).xml \
+	   ${in_hypothesis_file} \
+	   ${in_reference_file}  \
+	   ${out_tercom_alignments_file}
+
+fi
